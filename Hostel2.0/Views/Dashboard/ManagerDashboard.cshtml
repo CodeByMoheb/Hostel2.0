@@ -1,0 +1,289 @@
+@model Hostel2._0.Models.ViewModels.DashboardViewModels.ManagerDashboardViewModel
+@{
+    ViewData["Title"] = "Manager Dashboard";
+}
+
+<div class="container-fluid manager-dashboard">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">@Model.Hostel.Name - Dashboard</h1>
+        <a href="#" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+        </a>
+    </div>
+
+    <!-- Subscription Alert -->
+    @if (!Model.Hostel.IsActive)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Pending Approval:</strong> Your hostel is awaiting admin approval. Some features may be limited.
+            <a asp-controller="Hostel" asp-action="PendingApproval" class="alert-link">Check status</a>.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    else if (Model.Hostel.SubscriptionEndDate < DateTime.Now.AddDays(7))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <strong>Subscription Expiring:</strong> Your subscription will expire on @Model.Hostel.SubscriptionEndDate.ToString("MMM dd, yyyy").
+            <a asp-controller="Hostel" asp-action="ChooseSubscription" class="alert-link">Renew now</a>.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Rooms</h5>
+                    <p class="card-text display-6">@Model.TotalRooms</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Total Students</h5>
+                    <p class="card-text display-6">@Model.TotalStudents</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Active Meals</h5>
+                    <p class="card-text display-6">@Model.Meals.Count</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Meal Plans</h5>
+                    <p class="card-text display-6">@Model.MealPlans.Count</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Notices -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <span>Recent Notices</span>
+                    <a asp-controller="Notice" asp-action="Create" class="btn btn-light btn-sm">New Notice</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Created</th>
+                                <th>Expires</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var notice in Model.RecentNotices)
+                        {
+                            <tr>
+                                <td>@notice.Title</td>
+                                <td>@notice.CreatedAt.ToString("MM/dd/yyyy")</td>
+                                <td>@notice.ExpiryDate.ToString("MM/dd/yyyy")</td>
+                                <td>
+                                    <span class="badge bg-@(notice.ExpiryDate > DateTime.Now ? "success" : "danger")">
+                                        @(notice.ExpiryDate > DateTime.Now ? "Active" : "Expired")
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room List -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">Rooms</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Room #</th>
+                                <th>Type</th>
+                                <th>Capacity</th>
+                                <th>Occupancy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var room in Model.Rooms)
+                        {
+                            <tr>
+                                <td>@room.RoomNumber</td>
+                                <td>@room.RoomType</td>
+                                <td>@room.Capacity</td>
+                                <td>@room.CurrentOccupancy</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Student List -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">Students</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Room</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var student in Model.Students)
+                        {
+                            <tr>
+                                <td>@student.FirstName @student.LastName</td>
+                                <td>@student.Email</td>
+                                <td>@student.RoomId</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Payments and Meal Plans -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">Recent Payments</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var payment in Model.RecentPayments)
+                        {
+                            <tr>
+                                <td>@payment.User?.FirstName @payment.User?.LastName</td>
+                                <td>@payment.Amount.ToString("C")</td>
+                                <td><span class="badge bg-@(payment.Status == Hostel2._0.Models.Enums.PaymentStatus.Completed ? "success" : "warning")">@payment.Status</span></td>
+                                <td>@payment.CreatedAt.ToString("MM/dd/yyyy")</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">Meal Plans</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Active</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var plan in Model.MealPlans)
+                        {
+                            <tr>
+                                <td>@plan.Name</td>
+                                <td>@plan.StartDate.ToString("MM/dd/yyyy")</td>
+                                <td>@plan.EndDate.ToString("MM/dd/yyyy")</td>
+                                <td>@(plan.IsActive ? "Yes" : "No")</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meals List -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">Meals</div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Rate</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var meal in Model.Meals)
+                        {
+                            <tr>
+                                <td>@meal.Name</td>
+                                <td>@meal.Type</td>
+                                <td>@meal.Rate.ToString("C")</td>
+                                <td>@meal.Description</td>
+                                <td>@(meal.IsActive ? "Active" : "Inactive")</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Copy hostel code to clipboard
+        function copyCode() {
+            const codeElement = document.getElementById('hostelCode');
+            const code = codeElement.textContent;
+            
+            navigator.clipboard.writeText(code).then(function() {
+                const btn = document.getElementById('copyCodeBtn');
+                const originalText = btn.innerHTML;
+                
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-success');
+                
+                setTimeout(function() {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-primary');
+                }, 2000);
+            });
+        }
+        
+        // Charts will be initialized by dashboard.js
+    </script>
+} 

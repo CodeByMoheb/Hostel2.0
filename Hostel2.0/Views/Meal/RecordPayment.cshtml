@@ -1,0 +1,75 @@
+@model Hostel2._0.Models.ViewModels.MealPaymentViewModel
+@{
+    ViewData["Title"] = "Record Payment";
+    var student = ViewBag.Student as Hostel2._0.Models.ApplicationUser;
+}
+
+<div class="container-fluid manager-dashboard">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Record Meal Payment</h2>
+        <a asp-action="MealReport" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Report
+        </a>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card dashboard-card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Payment for @(student?.FirstName) @(student?.LastName)</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="RecordPayment" method="post">
+                        <input type="hidden" asp-for="StudentId" />
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label asp-for="Month" class="form-label">Month</label>
+                                <input asp-for="Month" class="form-control" type="month" value="@Model.Month.ToString("yyyy-MM")" />
+                                <span asp-validation-for="Month" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Amount" class="form-label"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input asp-for="Amount" class="form-control" type="number" step="0.01" min="0.01" />
+                                </div>
+                                <span asp-validation-for="Amount" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="PaymentType" class="form-label"></label>
+                            <select asp-for="PaymentType" class="form-select" asp-items="Html.GetEnumSelectList<Hostel2._0.Models.Enums.PaymentType>()"></select>
+                            <span asp-validation-for="PaymentType" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="TransactionReference" class="form-label"></label>
+                            <input asp-for="TransactionReference" class="form-control" />
+                            <span asp-validation-for="TransactionReference" class="text-danger"></span>
+                            <small class="text-muted">Optional transaction reference number, receipt number, etc.</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="Notes" class="form-label"></label>
+                            <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <a asp-action="StudentReport" asp-route-id="@Model.StudentId" class="btn btn-secondary me-2">Cancel</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check me-1"></i> Record Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

@@ -1,0 +1,99 @@
+@model Hostel2._0.Models.ViewModels.HostelApprovalViewModel
+@{
+    ViewData["Title"] = "Hostel Approval Status";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Hostel Approval Status</h6>
+                    <a asp-controller="Dashboard" asp-action="ManagerDashboard" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="mb-3">@Model.Hostel.Name</h5>
+                            <p><strong>Address:</strong> @Model.Hostel.Address, @Model.Hostel.City, @Model.Hostel.State @Model.Hostel.PostalCode</p>
+                            <p><strong>Contact:</strong> @Model.Hostel.ContactNumber</p>
+                            <p><strong>Email:</strong> @Model.Hostel.Email</p>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center mb-4">
+                                @switch (Model.ApprovalStatus)
+                                {
+                                    case Hostel2._0.Models.Enums.ApprovalStatus.Pending:
+                                        <div class="mb-3">
+                                            <i class="fas fa-clock fa-4x text-warning"></i>
+                                        </div>
+                                        <h4 class="text-warning">Pending Approval</h4>
+                                        <p class="text-muted">Your hostel registration is under review by our administrators.</p>
+                                        break;
+                                    case Hostel2._0.Models.Enums.ApprovalStatus.Approved:
+                                        <div class="mb-3">
+                                            <i class="fas fa-check-circle fa-4x text-success"></i>
+                                        </div>
+                                        <h4 class="text-success">Approved</h4>
+                                        <p class="text-muted">Your hostel has been approved! You can now start using all features.</p>
+                                        break;
+                                    case Hostel2._0.Models.Enums.ApprovalStatus.Rejected:
+                                        <div class="mb-3">
+                                            <i class="fas fa-times-circle fa-4x text-danger"></i>
+                                        </div>
+                                        <h4 class="text-danger">Rejected</h4>
+                                        <p class="text-muted">Your hostel registration was rejected. Please see comments below.</p>
+                                        break;
+                                    case Hostel2._0.Models.Enums.ApprovalStatus.UnderReview:
+                                        <div class="mb-3">
+                                            <i class="fas fa-search fa-4x text-info"></i>
+                                        </div>
+                                        <h4 class="text-info">Under Review</h4>
+                                        <p class="text-muted">Your hostel is currently being reviewed by our team.</p>
+                                        break;
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Comments))
+                    {
+                        <div class="alert alert-info mt-4">
+                            <h6 class="font-weight-bold">Admin Comments:</h6>
+                            <p class="mb-0">@Model.Comments</p>
+                        </div>
+                    }
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h6 class="font-weight-bold">Next Steps:</h6>
+                            @switch (Model.ApprovalStatus)
+                            {
+                                case Hostel2._0.Models.Enums.ApprovalStatus.Pending:
+                                    <p>Please wait while our administrators review your hostel registration. This typically takes 1-2 business days.</p>
+                                    break;
+                                case Hostel2._0.Models.Enums.ApprovalStatus.Approved:
+                                    <p>Your hostel is now active! The next step is to choose a subscription plan.</p>
+                                    <a asp-controller="Hostel" asp-action="ChooseSubscription" class="btn btn-primary mt-2">
+                                        <i class="fas fa-credit-card me-1"></i> Choose Subscription Plan
+                                    </a>
+                                    break;
+                                case Hostel2._0.Models.Enums.ApprovalStatus.Rejected:
+                                    <p>Please review the admin comments above and make necessary changes to your hostel information.</p>
+                                    <a asp-controller="Hostel" asp-action="Create" class="btn btn-primary mt-2">
+                                        <i class="fas fa-edit me-1"></i> Update Hostel Information
+                                    </a>
+                                    break;
+                                case Hostel2._0.Models.Enums.ApprovalStatus.UnderReview:
+                                    <p>Our team is reviewing additional information about your hostel. We may contact you for more details.</p>
+                                    break;
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

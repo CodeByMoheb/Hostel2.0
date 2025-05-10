@@ -1,0 +1,181 @@
+@model List<Hostel2._0.Models.ViewModels.StudentMealViewModel>
+@{
+    ViewData["Title"] = "Record Meals";
+    DateTime selectedDate = ViewBag.SelectedDate ?? DateTime.Today;
+}
+
+<div class="container-fluid manager-dashboard">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Record Daily Meals</h2>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Meals
+        </a>
+    </div>
+    
+    <div class="card dashboard-card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Select Date</h5>
+            </div>
+            <form asp-action="RecordMeals" method="get" class="mt-3">
+                <div class="row">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            <input type="date" name="date" class="form-control" value="@selectedDate.ToString("yyyy-MM-dd")" />
+                            <button type="submit" class="btn btn-primary">Select</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i> No students found for this hostel. Please add students to the hostel to record meals.
+        </div>
+    }
+    else
+    {
+        <form asp-action="RecordMeals" method="post">
+            <input type="hidden" name="selectedDate" value="@selectedDate.ToString("yyyy-MM-dd")" />
+            
+            <div class="card dashboard-card">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Student Meals for @selectedDate.ToString("MMMM dd, yyyy")</h5>
+                        <button type="submit" class="btn btn-light btn-sm">
+                            <i class="fas fa-save me-1"></i> Save All
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Student</th>
+                                    <th class="text-center">Breakfast</th>
+                                    <th class="text-center">Lunch</th>
+                                    <th class="text-center">Dinner</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" name="[@i].StudentId" value="@Model[i].StudentId" />
+                                            <input type="hidden" name="[@i].StudentName" value="@Model[i].StudentName" />
+                                            <input type="hidden" name="[@i].MealDate" value="@Model[i].MealDate.ToString("yyyy-MM-dd")" />
+                                            @Model[i].StudentName
+                                        </td>
+                                        
+                                        @{
+                                            var breakfastMeals = Model[i].Meals.Where(m => m.Type == Hostel2._0.Models.Enums.MealType.Breakfast).ToList();
+                                            var lunchMeals = Model[i].Meals.Where(m => m.Type == Hostel2._0.Models.Enums.MealType.Lunch).ToList();
+                                            var dinnerMeals = Model[i].Meals.Where(m => m.Type == Hostel2._0.Models.Enums.MealType.Dinner).ToList();
+                                        }
+                                        
+                                        <td class="text-center">
+                                            @for (int j = 0; j < breakfastMeals.Count; j++)
+                                            {
+                                                <div class="form-check d-inline-block">
+                                                    <input type="hidden" name="[@i].Meals[@j].MealId" value="@breakfastMeals[j].MealId" />
+                                                    <input type="hidden" name="[@i].Meals[@j].Name" value="@breakfastMeals[j].Name" />
+                                                    <input type="hidden" name="[@i].Meals[@j].Type" value="@breakfastMeals[j].Type" />
+                                                    <input type="hidden" name="[@i].Meals[@j].Rate" value="@breakfastMeals[j].Rate" />
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           name="[@i].Meals[@j].IsSelected" value="true" 
+                                                           id="breakfast-@Model[i].StudentId-@breakfastMeals[j].MealId"
+                                                           @(breakfastMeals[j].IsSelected ? "checked" : "") />
+                                                    <label class="form-check-label" for="breakfast-@Model[i].StudentId-@breakfastMeals[j].MealId">
+                                                        @breakfastMeals[j].Name ($@breakfastMeals[j].Rate)
+                                                    </label>
+                                                </div>
+                                            }
+                                            
+                                            @if (!breakfastMeals.Any())
+                                            {
+                                                <small class="text-muted">No breakfast defined</small>
+                                            }
+                                        </td>
+                                        
+                                        <td class="text-center">
+                                            @for (int j = 0; j < lunchMeals.Count; j++)
+                                            {
+                                                <div class="form-check d-inline-block">
+                                                    <input type="hidden" name="[@i].Meals[@(breakfastMeals.Count + j)].MealId" value="@lunchMeals[j].MealId" />
+                                                    <input type="hidden" name="[@i].Meals[@(breakfastMeals.Count + j)].Name" value="@lunchMeals[j].Name" />
+                                                    <input type="hidden" name="[@i].Meals[@(breakfastMeals.Count + j)].Type" value="@lunchMeals[j].Type" />
+                                                    <input type="hidden" name="[@i].Meals[@(breakfastMeals.Count + j)].Rate" value="@lunchMeals[j].Rate" />
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           name="[@i].Meals[@(breakfastMeals.Count + j)].IsSelected" value="true" 
+                                                           id="lunch-@Model[i].StudentId-@lunchMeals[j].MealId"
+                                                           @(lunchMeals[j].IsSelected ? "checked" : "") />
+                                                    <label class="form-check-label" for="lunch-@Model[i].StudentId-@lunchMeals[j].MealId">
+                                                        @lunchMeals[j].Name ($@lunchMeals[j].Rate)
+                                                    </label>
+                                                </div>
+                                            }
+                                            
+                                            @if (!lunchMeals.Any())
+                                            {
+                                                <small class="text-muted">No lunch defined</small>
+                                            }
+                                        </td>
+                                        
+                                        <td class="text-center">
+                                            @for (int j = 0; j < dinnerMeals.Count; j++)
+                                            {
+                                                <div class="form-check d-inline-block">
+                                                    <input type="hidden" name="[@i].Meals[@(breakfastMeals.Count + lunchMeals.Count + j)].MealId" value="@dinnerMeals[j].MealId" />
+                                                    <input type="hidden" name="[@i].Meals[@(breakfastMeals.Count + lunchMeals.Count + j)].Name" value="@dinnerMeals[j].Name" />
+                                                    <input type="hidden" name="[@i].Meals[@(breakfastMeals.Count + lunchMeals.Count + j)].Type" value="@dinnerMeals[j].Type" />
+                                                    <input type="hidden" name="[@i].Meals[@(breakfastMeals.Count + lunchMeals.Count + j)].Rate" value="@dinnerMeals[j].Rate" />
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           name="[@i].Meals[@(breakfastMeals.Count + lunchMeals.Count + j)].IsSelected" value="true" 
+                                                           id="dinner-@Model[i].StudentId-@dinnerMeals[j].MealId"
+                                                           @(dinnerMeals[j].IsSelected ? "checked" : "") />
+                                                    <label class="form-check-label" for="dinner-@Model[i].StudentId-@dinnerMeals[j].MealId">
+                                                        @dinnerMeals[j].Name ($@dinnerMeals[j].Rate)
+                                                    </label>
+                                                </div>
+                                            }
+                                            
+                                            @if (!dinnerMeals.Any())
+                                            {
+                                                <small class="text-muted">No dinner defined</small>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle me-2"></i> Check the meals that each student consumed for @selectedDate.ToString("MMMM dd, yyyy").
+                        Meal rates are applied according to the current meal plan.
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Save Meal Records
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // You can add JavaScript for bulk selection if needed
+        });
+    </script>
+} 

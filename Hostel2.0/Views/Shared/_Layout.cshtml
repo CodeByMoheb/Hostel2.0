@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hostel2.0</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="animate__animated animate__fadeInLeft">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-building"></i> Hostel2.0</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li class="@(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                    <a asp-controller="Dashboard" asp-action="Index">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li>
+                        <a href="#hostelSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <i class="fas fa-hotel"></i> Hostels
+                        </a>
+                        <ul class="collapse list-unstyled" id="hostelSubmenu">
+                            <li>
+                                <a asp-controller="Hostel" asp-action="Index">All Hostels</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Hostel" asp-action="Create">Add New Hostel</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#userSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <i class="fas fa-users"></i> Users
+                        </a>
+                        <ul class="collapse list-unstyled" id="userSubmenu">
+                            <li>
+                                <a asp-controller="User" asp-action="Index">All Users</a>
+                            </li>
+                            <li>
+                                <a asp-controller="User" asp-action="PendingApprovals">Pending Approvals</a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                @if (User.IsInRole("HostelManager"))
+                {
+                    <li>
+                        <a asp-controller="Room" asp-action="Index">
+                            <i class="fas fa-door-open"></i> Rooms
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#mealSubmenu" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                            <i class="fas fa-utensils"></i> Meal Management
+                        </a>
+                        <ul class="collapse list-unstyled" id="mealSubmenu">
+                            <li>
+                                <a asp-controller="Meal" asp-action="Index">Meals</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Meal" asp-action="MealPlan">Meal Plan</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Meal" asp-action="RecordMeals">Record Daily Meals</a>
+                            </li>
+                            <li>
+                                <a asp-controller="Meal" asp-action="MealReport">Meal Reports</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a asp-controller="Notice" asp-action="Index">
+                            <i class="fas fa-bullhorn"></i> Notices
+                        </a>
+                    </li>
+                }
+                @if (User.IsInRole("Student"))
+                {
+                    <li>
+                        <a asp-controller="Payment" asp-action="Index">
+                            <i class="fas fa-credit-card"></i> Payments
+                        </a>
+                    </li>
+                }
+                <li>
+                    <a asp-controller="User" asp-action="Profile">
+                        <i class="fas fa-user-circle"></i> Profile
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="ms-auto">
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid animate__animated animate__fadeIn">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

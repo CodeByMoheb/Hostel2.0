@@ -1,0 +1,72 @@
+@model IEnumerable<Hostel2._0.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Pending Approvals";
+}
+
+<div class="container-fluid admin-dashboard">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Pending Approvals</h2>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to User List
+        </a>
+    </div>
+    
+    <div class="card dashboard-card animate-fade-in">
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> There are no pending approvals at this time.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Hostel</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>@user.FirstName @user.LastName</td>
+                                    <td>@user.Email</td>
+                                    <td>
+                                        <span class="badge bg-@(user.Role == Hostel2._0.Models.Enums.UserRole.HostelManager ? "info" : "primary")">
+                                            @user.Role
+                                        </span>
+                                    </td>
+                                    <td>@user.Hostel?.Name</td>
+                                    <td>
+                                        <div class="d-flex">
+                                            <form asp-action="Approve" asp-route-id="@user.Id" method="post" class="me-1">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-check me-1"></i> Approve
+                                                </button>
+                                            </form>
+                                            
+                                            <form asp-action="Reject" asp-route-id="@user.Id" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-times me-1"></i> Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div> 

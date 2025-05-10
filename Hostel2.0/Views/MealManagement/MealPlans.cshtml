@@ -1,0 +1,74 @@
+@model IEnumerable<Hostel2._0.Models.MealManagement.MealPlan>
+@{
+    ViewData["Title"] = "Meal Plans";
+}
+
+<div class="container-fluid">
+    <h2 class="mb-4">Meal Plans</h2>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Meal Plans List</h6>
+            <a asp-action="CreateMealPlan" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create New Plan
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="mealPlansTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Plan Name</th>
+                            <th>Breakfast Rate</th>
+                            <th>Lunch Rate</th>
+                            <th>Dinner Rate</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var plan in Model)
+                        {
+                            <tr>
+                                <td>@plan.Name</td>
+                                <td>@plan.BreakfastRate.ToString("C")</td>
+                                <td>@plan.LunchRate.ToString("C")</td>
+                                <td>@plan.DinnerRate.ToString("C")</td>
+                                <td>@plan.StartDate.ToShortDateString()</td>
+                                <td>@plan.EndDate.ToShortDateString()</td>
+                                <td>
+                                    @if (plan.IsActive)
+                                    {
+                                        <span class="badge badge-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="EditMealPlan" asp-route-id="@plan.Id" class="btn btn-sm btn-info">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="MealPlanDetails" asp-route-id="@plan.Id" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#mealPlansTable').DataTable();
+        });
+    </script>
+} 

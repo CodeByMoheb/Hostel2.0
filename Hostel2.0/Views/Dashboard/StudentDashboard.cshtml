@@ -1,0 +1,137 @@
+@model Hostel2._0.Models.ViewModels.DashboardViewModels.StudentDashboardViewModel
+@using Hostel2._0.Models.Enums
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="container-fluid student-dashboard">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Welcome to @Model.Hostel.Name</h1>
+        <a asp-controller="Payment" asp-action="Create" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+            <i class="fas fa-credit-card fa-sm text-white-50"></i> Make Payment
+        </a>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Room Details Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card dashboard-card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Your Room</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                Room @Model.Room?.RoomNumber
+                            </div>
+                            <div class="text-xs text-gray-600">
+                                @Model.Room?.RoomType
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-door-open fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rent Status Card -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card dashboard-card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Monthly Rent</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @Model.Room?.MonthlyRent.ToString("C")
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Recent Notices -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Notices</h6>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        @foreach (var notice in Model.RecentNotices)
+                        {
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">@notice.Title</h6>
+                                    <small class="text-muted">
+                                        @notice.CreatedAt.ToString("MM/dd/yyyy")
+                                    </small>
+                                </div>
+                                <p class="mb-1">@notice.Content</p>
+                                @if (notice.IsImportant)
+                                {
+                                    <span class="badge bg-danger">Important</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Payments -->
+        <div class="col-xl-6 col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Payments</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var payment in Model.RecentPayments)
+                                {
+                                    <tr>
+                                        <td>@payment.CreatedAt.ToString("MM/dd/yyyy")</td>
+                                        <td>@payment.Amount.ToString("C")</td>
+                                        <td>@payment.Type</td>
+                                        <td>
+                                            <span class="badge bg-@(payment.Status == PaymentStatus.Completed ? "success" : "warning")">
+                                                @payment.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add any student-specific JavaScript here
+    </script>
+} 

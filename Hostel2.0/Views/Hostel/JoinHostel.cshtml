@@ -1,0 +1,49 @@
+@model Hostel2._0.Models.ViewModels.JoinHostelViewModel
+@{
+    ViewData["Title"] = "Join Hostel";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="text-center font-weight-light my-2">Join a Hostel</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-building fa-4x text-primary mb-3"></i>
+                        <p class="lead">Enter the registration code provided by your hostel manager to join.</p>
+                    </div>
+                    
+                    <form asp-action="JoinHostel" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="form-floating mb-3">
+                            <input asp-for="RegistrationCode" class="form-control form-control-lg text-center" 
+                                   placeholder="Enter registration code" style="letter-spacing: 0.5em; font-weight: bold;" />
+                            <label asp-for="RegistrationCode" class="text-muted"></label>
+                            <span asp-validation-for="RegistrationCode" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="d-flex align-items-center justify-content-center mt-4 mb-0">
+                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                                <i class="fas fa-sign-in-alt me-2"></i> Join Hostel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <div class="small">
+                        <i class="fas fa-info-circle me-1"></i> 
+                        Don't have a registration code? Please contact your hostel manager.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
