@@ -1,0 +1,531 @@
+@model Hostel2._0.Models.ViewModels.StudentDashboardViewModel
+@using Hostel2._0.Models.Enums
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="container-fluid dashboard-container">
+    <!-- Welcome Section with Animation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="welcome-card animate__animated animate__fadeIn">
+                <div class="welcome-content">
+                    <h1 class="welcome-title">Welcome, @Model.Student.FirstName!</h1>
+                    <p class="welcome-subtitle">Here's your hostel overview</p>
+                </div>
+                <div class="welcome-time">
+                    <div id="currentTime" class="time-display"></div>
+                    <div id="currentDate" class="date-display"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.IsApproved)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning animate__animated animate__fadeIn">
+                    <i class="fas fa-clock me-2"></i>
+                    <strong>Pending Approval</strong>
+                    <p class="mb-0">Your hostel application is pending approval. You'll be notified once it's approved.</p>
+                </div>
+            </div>
+        </div>
+    }
+    else if (!Model.HasRoom)
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-info animate__animated animate__fadeIn">
+                    <i class="fas fa-bed me-2"></i>
+                    <strong>No Room Assigned</strong>
+                    <p class="mb-0">You haven't been assigned a room yet. Please contact your hostel manager.</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Statistics Cards with Hover Effects -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card payment-card animate__animated animate__fadeInUp">
+                <div class="stat-icon">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Total Paid</h3>
+                    <div class="stat-value">@Model.TotalPaidAmount.ToString("C")</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card pending-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Pending Payment</h3>
+                    <div class="stat-value">@Model.PendingPaymentAmount.ToString("C")</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card attendance-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Attendance</h3>
+                    <div class="stat-value">@Model.AttendancePercentage%</div>
+                    <div class="progress mt-2">
+                        <div class="progress-bar" role="progressbar" style="width: @Model.AttendancePercentage%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="stat-card maintenance-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                <div class="stat-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-title">Pending Requests</h3>
+                    <div class="stat-value">@Model.PendingMaintenanceRequests</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activities with Tabs -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card activity-card animate__animated animate__fadeIn">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#payments">
+                                <i class="fas fa-money-bill me-2"></i>Payments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#maintenance">
+                                <i class="fas fa-tools me-2"></i>Maintenance
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#meals">
+                                <i class="fas fa-utensils me-2"></i>Meals
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#notices">
+                                <i class="fas fa-bell me-2"></i>Notices
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Payments Tab -->
+                        <div class="tab-pane fade show active" id="payments">
+                            @if (Model.RecentPayments.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var payment in Model.RecentPayments)
+                                            {
+                                                <tr>
+                                                    <td>@payment.PaymentDate.ToShortDateString()</td>
+                                                    <td>@payment.Amount.ToString("C")</td>
+                                                    <td>
+                                                        <span class="badge bg-@(payment.Status == PaymentStatus.Completed ? "success" : "warning")">
+                                                            @payment.Status
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class="fas fa-money-bill fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No recent payments</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Maintenance Tab -->
+                        <div class="tab-pane fade" id="maintenance">
+                            @if (Model.RecentMaintenanceRequests.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Description</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var request in Model.RecentMaintenanceRequests)
+                                            {
+                                                <tr>
+                                                    <td>@request.CreatedAt.ToShortDateString()</td>
+                                                    <td>@request.Description</td>
+                                                    <td>
+                                                        <span class="badge bg-@(request.Status == MaintenanceStatus.Completed ? "success" : "warning")">
+                                                            @request.Status
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class="fas fa-tools fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No recent maintenance requests</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Meals Tab -->
+                        <div class="tab-pane fade" id="meals">
+                            @if (Model.UpcomingMeals.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Meal Type</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var meal in Model.UpcomingMeals)
+                                            {
+                                                <tr>
+                                                    <td>@meal.MealDate.ToShortDateString()</td>
+                                                    <td>@meal.Meal.Type</td>
+                                                    <td>
+                                                        <span class="badge bg-@(meal.IsConsumed ? "success" : "warning")">
+                                                            @(meal.IsConsumed ? "Consumed" : "Not Consumed")
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class="fas fa-utensils fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No upcoming meals</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Notices Tab -->
+                        <div class="tab-pane fade" id="notices">
+                            @if (Model.RecentNotices.Any())
+                            {
+                                <div class="notice-list">
+                                    @foreach (var notice in Model.RecentNotices)
+                                    {
+                                        <div class="notice-item">
+                                            <div class="notice-header">
+                                                <h6 class="notice-title">@notice.Title</h6>
+                                                <small class="text-muted">@notice.CreatedAt.ToShortDateString()</small>
+                                            </div>
+                                            <p class="notice-content">@notice.Content</p>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center py-4">
+                                    <i class="fas fa-bell fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No recent notices</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        .dashboard-container {
+            padding: 1.5rem;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-title {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            opacity: 0.8;
+            margin-bottom: 0;
+        }
+
+        .welcome-time {
+            text-align: right;
+        }
+
+        .time-display {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .date-display {
+            opacity: 0.8;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .payment-card .stat-icon {
+            background: rgba(78, 115, 223, 0.1);
+            color: #4e73df;
+        }
+
+        .pending-card .stat-icon {
+            background: rgba(246, 194, 62, 0.1);
+            color: #f6c23e;
+        }
+
+        .attendance-card .stat-icon {
+            background: rgba(28, 200, 138, 0.1);
+            color: #1cc88a;
+        }
+
+        .maintenance-card .stat-icon {
+            background: rgba(231, 74, 59, 0.1);
+            color: #e74a3b;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e59d9;
+        }
+
+        .progress {
+            height: 6px;
+            border-radius: 3px;
+            background-color: #eaecf4;
+        }
+
+        .progress-bar {
+            background-color: #1cc88a;
+            border-radius: 3px;
+        }
+
+        .activity-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            background: none;
+            border-bottom: 1px solid #eaecf4;
+            padding: 1rem 1.5rem;
+        }
+
+        .nav-tabs {
+            border: none;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            margin-right: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: #f8f9fc;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: #4e73df;
+            color: white;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+        .badge {
+            padding: 0.5em 0.75em;
+            border-radius: 6px;
+        }
+
+        .notice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .notice-item {
+            background: #f8f9fc;
+            border-radius: 10px;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .notice-item:hover {
+            transform: translateX(5px);
+        }
+
+        .notice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .notice-title {
+            margin: 0;
+            color: #2e59d9;
+        }
+
+        .notice-content {
+            margin: 0;
+            color: #6c757d;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+        }
+
+        .alert i {
+            font-size: 1.25rem;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const timeOptions = { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            };
+            const dateOptions = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
+        }
+
+        // Update time immediately and then every second
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // Add hover effect to table rows
+        document.querySelectorAll('.table tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'translateX(5px)';
+                row.style.transition = 'transform 0.3s ease';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'translateX(0)';
+            });
+        });
+    </script>
+} 

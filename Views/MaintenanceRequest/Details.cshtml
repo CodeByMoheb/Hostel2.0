@@ -1,0 +1,57 @@
+@model Hostel2._0.Models.MaintenanceRequest
+@using Hostel2._0.Models.Enums
+
+@{
+    ViewData["Title"] = "Request Details";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="card-title mb-0">Maintenance Request Details</h2>
+                        <span class="badge @(Model.Status switch {
+                            MaintenanceStatus.Pending => "bg-warning",
+                            MaintenanceStatus.InProgress => "bg-info",
+                            MaintenanceStatus.Completed => "bg-success",
+                            MaintenanceStatus.Rejected => "bg-danger",
+                            _ => "bg-secondary"
+                        }) fs-6">@Model.Status</span>
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">Issue Type</dt>
+                        <dd class="col-sm-9">@Model.IssueType</dd>
+
+                        <dt class="col-sm-3">Description</dt>
+                        <dd class="col-sm-9">@Model.Description</dd>
+
+                        <dt class="col-sm-3">Location</dt>
+                        <dd class="col-sm-9">@Model.Location</dd>
+
+                        <dt class="col-sm-3">Created On</dt>
+                        <dd class="col-sm-9">@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</dd>
+
+                        @if (Model.Status == MaintenanceStatus.Completed)
+                        {
+                            <dt class="col-sm-3">Completed On</dt>
+                            <dd class="col-sm-9">@Model.CompletedAt?.ToString("MMM dd, yyyy HH:mm")</dd>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.Notes))
+                        {
+                            <dt class="col-sm-3">Staff Notes</dt>
+                            <dd class="col-sm-9">@Model.Notes</dd>
+                        }
+                    </dl>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

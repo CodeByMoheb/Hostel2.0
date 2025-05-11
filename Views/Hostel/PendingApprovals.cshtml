@@ -1,0 +1,69 @@
+@model IEnumerable<Hostel2._0.Models.Hostel>
+@{
+    ViewData["Title"] = "Pending Hostel Approvals";
+}
+
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Pending Hostel Approvals</h6>
+        </div>
+        <div class="card-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    No pending hostel approvals at this time.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Manager</th>
+                                <th>Location</th>
+                                <th>Contact</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var hostel in Model)
+                            {
+                                <tr>
+                                    <td>@hostel.Name</td>
+                                    <td>@($"{hostel.Manager?.FirstName} {hostel.Manager?.LastName}")</td>
+                                    <td>@($"{hostel.City}, {hostel.State}")</td>
+                                    <td>
+                                        <div>@hostel.Email</div>
+                                        <div>@hostel.ContactNumber</div>
+                                    </td>
+                                    <td>@hostel.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                    <td>
+                                        <form asp-action="ApproveHostel" asp-route-id="@hostel.Id" method="post" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                <i class="fas fa-check"></i> Approve
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable();
+        });
+    </script>
+} 

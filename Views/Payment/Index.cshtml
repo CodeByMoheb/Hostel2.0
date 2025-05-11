@@ -1,0 +1,121 @@
+@model IEnumerable<Hostel2._0.Models.Payment>
+@using Hostel2._0.Models.Enums
+@{
+    ViewData["Title"] = "Payment Management";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Payment Management</h1>
+        <a asp-action="Create" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Record New Payment
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Revenue (This Month)
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @Model.Where(p => p.PaymentDate.Month == DateTime.Now.Month && 
+                                               p.PaymentDate.Year == DateTime.Now.Year)
+                                     .Sum(p => p.Amount).ToString("C")
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Pending Payments
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @Model.Count(p => p.Status == PaymentStatus.Pending)
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Payment List</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Paid Date</th>
+                            <th>Status</th>
+                            <th>Method</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var payment in Model)
+                        {
+                            <tr>
+                                <td>@payment.Student.FullName</td>
+                                <td>@payment.Type</td>
+                                <td>@payment.Amount.ToString("C")</td>
+                                <td>@(payment.DueDate?.ToString("MMM dd, yyyy") ?? "N/A")</td>
+                                <td>@(payment.PaymentDate == default(DateTime) ? "N/A" : payment.PaymentDate.ToString("MMM dd, yyyy"))</td>
+                                <td>
+                                    <span class="badge bg-@(payment.Status == PaymentStatus.Completed ? "success" : 
+                                                      payment.Status == PaymentStatus.Failed ? "danger" : 
+                                                      payment.Status == PaymentStatus.Refunded ? "warning" : "secondary")">
+                                        @payment.Status
+                                    </span>
+                                </td>
+                                <td>@payment.Method</td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@payment.Id" class="btn btn-info btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@payment.Id" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Receipt" asp-route-id="@payment.Id" class="btn btn-success btn-sm">
+                                        <i class="fas fa-file-invoice"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
+} 

@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Welcome to Hostel Management System";
+}
+
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <div class="hero-section text-center py-5 mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 60vh; display: flex; align-items: center; justify-content: center;">
+        <div class="container">
+            <h1 class="display-4 text-white mb-4">Welcome to Hostel Management System</h1>
+            <p class="lead text-white mb-5">A comprehensive solution for managing hostel operations efficiently</p>
+            <a href="@Url.Action("Login", "Account")" class="btn btn-light btn-lg px-4 py-2">
+                Login to Dashboard
+                <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="container mb-5">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title h4">Student Management</h3>
+                        <p class="card-text">Efficiently manage student records, room allocations, and attendance</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-money-bill-wave fa-3x text-success mb-3"></i>
+                        <h3 class="card-title h4">Payment Tracking</h3>
+                        <p class="card-text">Streamlined payment processing and financial management</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clipboard-list fa-3x text-info mb-3"></i>
+                        <h3 class="card-title h4">Facility Management</h3>
+                        <p class="card-text">Track maintenance requests and manage hostel facilities</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            transition: transform 0.3s ease;
+            border-radius: 15px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .btn-light {
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-light:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+    </style>
+}

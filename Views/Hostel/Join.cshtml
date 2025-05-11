@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Join Hostel";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h2 class="text-center mb-0">Join a Hostel</h2>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Join" method="post">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            Enter the join code provided by your hostel manager to request joining a hostel.
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(ViewBag.Message))
+                        {
+                            <div class="alert alert-danger">
+                                @ViewBag.Message
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <label for="joinCode" class="control-label">Join Code</label>
+                            <input type="text" id="joinCode" name="joinCode" class="form-control" required maxlength="8" />
+                        </div>
+
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-primary">Submit Request</button>
+                            <a asp-controller="Dashboard" asp-action="StudentDashboard" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

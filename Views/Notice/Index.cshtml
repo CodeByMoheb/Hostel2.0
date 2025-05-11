@@ -1,0 +1,78 @@
+@model IEnumerable<Hostel2._0.Models.Notice>
+@{
+    ViewData["Title"] = "Notice Management";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Notice Management</h1>
+        <a asp-action="Create" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Create New Notice
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Notice List</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Publish Date</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var notice in Model)
+                        {
+                            <tr>
+                                <td>@notice.Title</td>
+                                <td>@notice.Type</td>
+                                <td>
+                                    <span class="badge bg-@(notice.Priority == NoticePriority.Urgent ? "danger" : 
+                                                      notice.Priority == NoticePriority.High ? "warning" : 
+                                                      notice.Priority == NoticePriority.Medium ? "info" : "secondary")">
+                                        @notice.Priority
+                                    </span>
+                                </td>
+                                <td>@notice.PublishDate.ToString("MMM dd, yyyy")</td>
+                                <td>@(notice.ExpiryDate?.ToString("MMM dd, yyyy") ?? "No Expiry")</td>
+                                <td>
+                                    <span class="badge bg-@(notice.IsActive ? "success" : "danger")">
+                                        @(notice.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@notice.Id" class="btn btn-info btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@notice.Id" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Recipients" asp-route-id="@notice.Id" class="btn btn-success btn-sm">
+                                        <i class="fas fa-users"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
+} 

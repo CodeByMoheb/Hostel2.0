@@ -1,0 +1,77 @@
+@model IEnumerable<Hostel2._0.Models.Document>
+@{
+    ViewData["Title"] = "Document Management";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Document Management</h1>
+        <a asp-action="Upload" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+            <i class="fas fa-upload fa-sm text-white-50"></i> Upload Document
+        </a>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Document List</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Student</th>
+                            <th>Upload Date</th>
+                            <th>File Type</th>
+                            <th>Size</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var document in Model)
+                        {
+                            <tr>
+                                <td>@document.Title</td>
+                                <td>@document.Type</td>
+                                <td>@(document.Student?.FullName ?? "N/A")</td>
+                                <td>@document.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td>@document.FileType</td>
+                                <td>@(document.FileSize / 1024) KB</td>
+                                <td>
+                                    <span class="badge bg-@(document.IsVerified ? "success" : "warning")">
+                                        @(document.IsVerified ? "Verified" : "Pending")
+                                    </span>
+                                </td>
+                                <td>
+                                    <a asp-action="Download" asp-route-id="@document.Id" class="btn btn-info btn-sm">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@document.Id" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-info-circle"></i>
+                                    </a>
+                                    @if (!document.IsVerified)
+                                    {
+                                        <a asp-action="Verify" asp-route-id="@document.Id" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable();
+        });
+    </script>
+} 

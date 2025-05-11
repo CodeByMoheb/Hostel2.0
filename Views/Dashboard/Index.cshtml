@@ -1,0 +1,22 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Loading Dashboard...</h1>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Redirect to the appropriate dashboard based on user role
+        $(document).ready(function() {
+            // The controller will handle the redirection
+            // This is just a fallback in case JavaScript is enabled
+            window.location.href = '@Url.Action("Index", "Dashboard")';
+        });
+    </script>
+} 

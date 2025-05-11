@@ -1,0 +1,69 @@
+@model IEnumerable<Hostel2._0.Models.MaintenanceRequest>
+@using Hostel2._0.Models.Enums
+
+@{
+    ViewData["Title"] = "My Maintenance Requests";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">My Maintenance Requests</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> New Request
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="maintenanceTable">
+                    <thead>
+                        <tr>
+                            <th>Issue Type</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.IssueType</td>
+                                <td>@item.Description</td>
+                                <td>
+                                    <span class="badge @(item.Status switch {
+                                        MaintenanceStatus.Pending => "bg-warning",
+                                        MaintenanceStatus.InProgress => "bg-info",
+                                        MaintenanceStatus.Completed => "bg-success",
+                                        MaintenanceStatus.Rejected => "bg-danger",
+                                        _ => "bg-secondary"
+                                    })">
+                                        @item.Status
+                                    </span>
+                                </td>
+                                <td>@item.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                        <i class="fas fa-info-circle"></i> Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#maintenanceTable').DataTable({
+                "order": [[3, "desc"]]
+            });
+        });
+    </script>
+} 

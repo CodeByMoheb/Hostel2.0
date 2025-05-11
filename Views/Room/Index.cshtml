@@ -1,0 +1,89 @@
+@model IEnumerable<Hostel2._0.Models.Room>
+@{
+    ViewData["Title"] = "Room Management";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Room Management</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Add New Room
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped" id="roomsTable">
+                    <thead>
+                        <tr>
+                            <th>Room Number</th>
+                            <th>Type</th>
+                            <th>Floor</th>
+                            <th>Capacity</th>
+                            <th>Occupancy</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.RoomNumber</td>
+                                <td>@item.Type</td>
+                                <td>@item.Floor</td>
+                                <td>@item.Capacity</td>
+                                <td>@item.Occupants.Count / @item.Capacity</td>
+                                <td>
+                                    @if (item.Occupants.Count >= item.Capacity)
+                                    {
+                                        <span class="badge bg-danger">Full</span>
+                                    }
+                                    else if (item.Occupants.Count > 0)
+                                    {
+                                        <span class="badge bg-warning">Partially Occupied</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Available</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        @if (item.Occupants.Count < item.Capacity)
+                                        {
+                                            <a asp-action="Assign" asp-route-id="@item.Id" class="btn btn-success btn-sm">
+                                                <i class="fas fa-user-plus"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#roomsTable').DataTable({
+                "order": [[0, "asc"]],
+                "pageLength": 10,
+                "language": {
+                    "search": "Search rooms:"
+                }
+            });
+        });
+    </script>
+} 

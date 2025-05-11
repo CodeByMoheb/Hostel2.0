@@ -1,0 +1,116 @@
+@model Hostel2._0.Models.Room
+
+@{
+    ViewData["Title"] = "Room Details";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Room Details</h1>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Room Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Room Number</dt>
+                        <dd class="col-sm-8">@Model.RoomNumber</dd>
+
+                        <dt class="col-sm-4">Room Type</dt>
+                        <dd class="col-sm-8">@Model.Type</dd>
+
+                        <dt class="col-sm-4">Floor</dt>
+                        <dd class="col-sm-8">@Model.Floor</dd>
+
+                        <dt class="col-sm-4">Capacity</dt>
+                        <dd class="col-sm-8">@Model.Capacity</dd>
+
+                        <dt class="col-sm-4">Current Occupants</dt>
+                        <dd class="col-sm-8">@Model.Occupants.Count / @Model.Capacity</dd>
+
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Occupants.Count >= Model.Capacity)
+                            {
+                                <span class="badge bg-danger">Full</span>
+                            }
+                            else if (Model.Occupants.Count > 0)
+                            {
+                                <span class="badge bg-warning">Partially Occupied</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Available</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-4">Description</dt>
+                        <dd class="col-sm-8">@Model.Description</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Current Occupants</h5>
+                    @if (Model.Occupants.Count < Model.Capacity)
+                    {
+                        <a asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-success btn-sm">
+                            <i class="fas fa-user-plus"></i> Assign Student
+                        </a>
+                    }
+                </div>
+                <div class="card-body">
+                    @if (Model.Occupants.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Student ID</th>
+                                        <th>Contact</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var student in Model.Occupants)
+                                    {
+                                        <tr>
+                                            <td>@student.Name</td>
+                                            <td>@student.StudentId</td>
+                                            <td>@student.PhoneNumber</td>
+                                            <td>
+                                                <a asp-controller="Student" asp-action="Details" asp-route-id="@student.Id" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No occupants assigned to this room.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 
