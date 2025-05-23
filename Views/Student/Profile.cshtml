@@ -1,0 +1,104 @@
+@model Hostel2._0.Models.Student
+@{
+    ViewData["Title"] = "My Profile";
+}
+@section Styles {
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, .container-fluid { font-family: 'Inter', Arial, sans-serif; background: linear-gradient(135deg, #e0e7ff 0%, #f4f6fa 100%); }
+        .profile-container {
+            max-width: 480px;
+            margin: 2.5rem auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 16px rgba(25,118,210,0.09);
+            padding: 2.2rem 2.2rem 1.5rem 2.2rem;
+            animation: fadeIn 0.7s;
+        }
+        .profile-avatar {
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+            color: #1976D2;
+            margin: 0 auto 1.2rem auto;
+            box-shadow: 0 2px 8px rgba(0,191,174,0.13);
+        }
+        .profile-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #232946;
+            margin-bottom: 0.2rem;
+        }
+        .profile-status {
+            display: block;
+            text-align: center;
+            font-size: 1rem;
+            border-radius: 7px;
+            padding: 0.2em 0.8em;
+            background: #43A047;
+            color: #fff;
+            font-weight: 600;
+            margin: 0 auto 1.2rem auto;
+            width: fit-content;
+        }
+        .profile-status.inactive { background: #FFA000; color: #333; }
+        .profile-table {
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        .profile-table th {
+            text-align: left;
+            color: #1976D2;
+            font-weight: 600;
+            padding: 0.4rem 0.7rem 0.4rem 0;
+            width: 38%;
+            font-size: 1.01rem;
+        }
+        .profile-table td {
+            color: #232946;
+            font-weight: 500;
+            padding: 0.4rem 0.7rem;
+            font-size: 1.01rem;
+        }
+        .back-btn {
+            background: #1976D2;
+            color: #fff;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.01rem;
+            padding: 0.4rem 1.2rem;
+            border: none;
+            margin-bottom: 1.2rem;
+            transition: background 0.18s, color 0.18s;
+        }
+        .back-btn:hover { background: #00BFAE; color: #fff; }
+        @@keyframes fadeIn { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: translateY(0);} }
+        @@media (max-width: 600px) {
+            .profile-container { padding: 1.1rem 0.5rem; }
+        }
+    </style>
+}
+<div class="container-fluid">
+    <div class="profile-container">
+        <a href="/Dashboard/StudentDashboard" class="back-btn mb-3"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <div class="profile-avatar">
+            <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="profile-title">@Model.FullName</div>
+        <span class="profile-status @(Model.IsActive ? "" : "inactive")">
+            @(Model.IsActive ? "Active" : "Inactive")
+        </span>
+        <table class="profile-table">
+            <tr><th>Student ID:</th><td>@Model.StudentId</td></tr>
+            <tr><th>Email:</th><td>@Model.Email</td></tr>
+            <tr><th>Phone:</th><td>@Model.PhoneNumber</td></tr>
+            <tr><th>Gender:</th><td>@Model.Gender</td></tr>
+            <tr><th>Date of Birth:</th><td>@Model.DateOfBirth.ToString("MMM dd, yyyy")</td></tr>
+            <tr><th>Address:</th><td>@Model.Address</td></tr>
+            <tr><th>Room:</th><td>@(Model.Room?.RoomNumber ?? "Not Assigned")</td></tr>
+        </table>
+    </div>
+</div> 

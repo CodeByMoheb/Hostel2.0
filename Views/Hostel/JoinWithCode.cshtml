@@ -1,0 +1,13 @@
+@model Hostel2._0.Models.ViewModels.JoinHostelViewModel
+
+<h1>Join Hostel</h1>
+
+@if (Model.RegistrationCode != null)
+{
+    <p>Your registration code for joining the hostel is: <strong>@Model.RegistrationCode</strong></p>
+    <p>Please use this code to complete your registration process.</p>
+}
+else
+{
+    <p>You are already a member of a hostel. If you need to join another hostel, please contact the administrator.</p>
+} 

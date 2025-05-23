@@ -44,20 +44,6 @@ namespace Hostel2._0.Models.ViewModels
         public string? Comments { get; set; }
     }
 
-    public class ChooseSubscriptionViewModel
-    {
-        public int HostelId { get; set; }
-        public string HostelName { get; set; } = string.Empty;
-        public List<SubscriptionPlan> SubscriptionPlans { get; set; } = new List<SubscriptionPlan>();
-        public SubscriptionBillingCycle BillingCycle { get; set; }
-    }
-
-    public class SubscriptionDetailsViewModel
-    {
-        public Hostel Hostel { get; set; } = null!;
-        public HostelSubscription? Subscription { get; set; }
-    }
-
     public class JoinHostelViewModel
     {
         [Required]

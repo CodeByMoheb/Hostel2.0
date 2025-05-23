@@ -1,0 +1,76 @@
+@model Hostel2._0.Models.ViewModels.PaymentViewModels.StudentPaymentViewModel
+@{
+    ViewData["Title"] = "Pay Monthly Rent";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow rounded-lg">
+                <div class="card-body">
+                    <h3 class="mb-3">Pay Monthly Rent</h3>
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+                    <table class="table table-borderless mb-4">
+                        <tr>
+                            <th>Student Name:</th>
+                            <td>@Model.StudentName</td>
+                        </tr>
+                        <tr>
+                            <th>Student ID:</th>
+                            <td>@Model.StudentId</td>
+                        </tr>
+                        <tr>
+                            <th>Room:</th>
+                            <td>@Model.RoomNumber</td>
+                        </tr>
+                        <tr>
+                            <th>Room Rent:</th>
+                            <td>৳@Model.RoomRent.ToString("N0")</td>
+                        </tr>
+                        <tr>
+                            <th>Service Charge:</th>
+                            <td>৳@Model.ServiceCharge.ToString("N0")</td>
+                        </tr>
+                        <tr class="border-top">
+                            <th>Total Due (This Month):</th>
+                            <td><strong>৳@Model.TotalDue.ToString("N0")</strong></td>
+                        </tr>
+                    </table>
+                    @if (Model.AlreadyPaid)
+                    {
+                        <div class="alert alert-success">You have already paid for this month.</div>
+                    }
+                    else
+                    {
+                        <form asp-action="PayConfirm" method="post">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                            
+                            <div class="form-group mb-3">
+                                <label asp-for="MobileNumber" class="form-label"></label>
+                                <input asp-for="MobileNumber" class="form-control" placeholder="Enter your mobile number" />
+                                <span asp-validation-for="MobileNumber" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3">
+                                <label asp-for="Amount" class="form-label"></label>
+                                <input asp-for="Amount" class="form-control" readonly />
+                                <span asp-validation-for="Amount" class="text-danger"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-lg w-100">
+                                <i class="fas fa-money-bill-wave"></i> Pay Now
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

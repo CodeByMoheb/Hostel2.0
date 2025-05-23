@@ -94,6 +94,10 @@ namespace Hostel2._0.Areas.Identity.Pages.Account
                     await _userManager.AddToRoleAsync(user, Input.Role.ToString());
 
                     await _signInManager.SignInAsync(user, isPersistent: false);
+                    if (Input.Role == UserRole.HostelManager)
+                    {
+                        return LocalRedirect("/Hostel/Create");
+                    }
                     return LocalRedirect(returnUrl);
                 }
                 foreach (var error in result.Errors)

@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using System;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Hostel2._0.Models.Enums;
 
 namespace Hostel2._0.Controllers
 {
@@ -127,8 +129,8 @@ namespace Hostel2._0.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Username = TempData["Username"].ToString();
-            ViewBag.Password = TempData["Password"].ToString();
+            ViewBag.Username = TempData["Username"]?.ToString() ?? "N/A";
+            ViewBag.Password = TempData["Password"]?.ToString() ?? "N/A";
             ViewBag.SuccessMessage = TempData["SuccessMessage"]?.ToString();
 
             return View();
@@ -221,12 +223,24 @@ namespace Hostel2._0.Controllers
                 return NotFound("Student not found in your hostel");
             }
 
+            // Get available rooms for the hostel
+            var availableRooms = await _context.Rooms
+                .Where(r => r.HostelId == hostel.Id)
+                .Select(r => new SelectListItem
+                {
+                    Value = r.Id.ToString(),
+                    Text = $"{r.RoomNumber} - {r.Type} (Capacity: {r.Students.Count}/{r.Capacity})"
+                })
+                .ToListAsync();
+
+            ViewBag.Rooms = availableRooms;
+
             return View(student);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Student student)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Email,PhoneNumber,StudentId,DateOfBirth,Gender,Address,RoomId,IsActive,HostelId,UserId,CreatedAt,CreatedBy")] Student student)
         {
             if (id != student.Id)
             {
@@ -245,10 +259,43 @@ namespace Hostel2._0.Controllers
                         return NotFound("Student not found in your hostel");
                     }
 
-                    student.UpdatedAt = DateTime.UtcNow;
-                    student.UpdatedBy = userId;
-                    _context.Update(student);
+                    // Get the existing student record
+                    var existingStudent = await _context.Students
+                        .Include(s => s.User)
+                        .FirstOrDefaultAsync(s => s.Id == id);
+
+                    if (existingStudent == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update only editable fields
+                    existingStudent.FirstName = student.FirstName;
+                    existingStudent.LastName = student.LastName;
+                    existingStudent.Name = $"{student.FirstName} {student.LastName}";
+                    existingStudent.Email = student.Email;
+                    existingStudent.PhoneNumber = student.PhoneNumber;
+                    existingStudent.StudentId = student.StudentId;
+                    existingStudent.DateOfBirth = student.DateOfBirth;
+                    existingStudent.Gender = student.Gender;
+                    existingStudent.Address = student.Address;
+                    existingStudent.RoomId = student.RoomId;
+                    existingStudent.IsActive = student.IsActive;
+                    existingStudent.UpdatedAt = DateTime.UtcNow;
+                    existingStudent.UpdatedBy = userId;
+
+                    // Update the associated user's email and phone number
+                    if (existingStudent.User != null)
+                    {
+                        existingStudent.User.Email = student.Email;
+                        existingStudent.User.PhoneNumber = student.PhoneNumber;
+                        await _userManager.UpdateAsync(existingStudent.User);
+                    }
+
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Student information updated successfully.";
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -261,8 +308,19 @@ namespace Hostel2._0.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
+
+            // If we got this far, something failed, redisplay form
+            var availableRooms = await _context.Rooms
+                .Where(r => r.HostelId == student.HostelId)
+                .Select(r => new SelectListItem
+                {
+                    Value = r.Id.ToString(),
+                    Text = $"{r.RoomNumber} - {r.Type} (Capacity: {r.Students.Count}/{r.Capacity})"
+                })
+                .ToListAsync();
+
+            ViewBag.Rooms = availableRooms;
             return View(student);
         }
 
@@ -319,8 +377,8 @@ namespace Hostel2._0.Controllers
             }
 
             var availableRooms = await _context.Rooms
-                .Include(r => r.Occupants)
-                .Where(r => r.HostelId == hostel.Id && r.Occupants.Count < r.Capacity)
+                .Include(r => r.Students)
+                .Where(r => r.HostelId == hostel.Id && r.Students.Count < r.Capacity)
                 .ToListAsync();
 
             ViewBag.AvailableRooms = availableRooms;
@@ -339,12 +397,12 @@ namespace Hostel2._0.Controllers
             }
 
             var room = await _context.Rooms
-                .Include(r => r.Occupants)
+                .Include(r => r.Students)
                 .FirstOrDefaultAsync(r => r.Id == roomId);
 
             if (room == null)
             {
-                return NotFound("Room not found");
+                return NotFound();
             }
 
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -355,15 +413,56 @@ namespace Hostel2._0.Controllers
                 return NotFound("Invalid hostel assignment");
             }
 
-            if (room.Occupants.Count >= room.Capacity)
+            if (room.Students.Count >= room.Capacity)
             {
                 ModelState.AddModelError("", "Room is at full capacity");
-                return View(student);
+                return View(room);
             }
 
             student.RoomId = room.Id;
             await _context.SaveChangesAsync();
+
+            // Create pending payment for the current month if not exists
+            var now = DateTime.Now;
+            var existingPayment = await _context.Payments.FirstOrDefaultAsync(p => p.StudentId == student.Id && p.PaymentDate.Year == now.Year && p.PaymentDate.Month == now.Month);
+            if (existingPayment == null)
+            {
+                var serviceCharge = 500M;
+                var dueAmount = room.MonthlyRent + serviceCharge;
+                var payment = new Payment
+                {
+                    Amount = dueAmount,
+                    Status = PaymentStatus.Pending,
+                    Type = PaymentType.Cash,
+                    HostelId = student.HostelId,
+                    StudentId = student.Id,
+                    RoomId = room.Id,
+                    PaymentDate = now,
+                    DueDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1),
+                    ReceiptNumber = $"RCPT-{now:yyyyMMddHHmmss}-{student.Id}",
+                    PaymentMethod = "Cash",
+                    Notes = $"Monthly payment for {now:MMMM yyyy}",
+                    CreatedBy = userId
+                };
+                _context.Payments.Add(payment);
+                await _context.SaveChangesAsync();
+            }
+
             return RedirectToAction(nameof(Details), new { id = student.Id });
+        }
+
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var student = await _context.Students
+                .Include(s => s.Room)
+                .FirstOrDefaultAsync(s => s.UserId == userId);
+            if (student == null)
+            {
+                return NotFound();
+            }
+            return View(student);
         }
 
         private bool StudentExists(int id)

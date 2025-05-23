@@ -62,7 +62,7 @@ namespace Hostel2._0.Models
         [Required]
         public string Location { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set; }
+        public new DateTime CreatedAt { get; set; }
 
         public DateTime? CompletedAt { get; set; }
 

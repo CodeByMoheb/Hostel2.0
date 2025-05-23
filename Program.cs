@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore;
 using Hostel2._0.Data;
 using Hostel2._0.Models;
 using Hostel2._0.Models.Enums;
+using Hostel2._0.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,15 +29,42 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+// Add PDF receipt service
+builder.Services.AddScoped<PdfReceiptService>();
+
 // Configure cookie policy
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
     options.LogoutPath = "/Identity/Account/Logout";
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.AccessDeniedPath = "/Dashboard/Index";
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
     options.Cookie.Name = "Hostel2.0Cookie";
+    options.Events = new Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationEvents
+    {
+        OnRedirectToAccessDenied = context =>
+        {
+            var user = context.HttpContext.User;
+            if (user.IsInRole("HostelManager"))
+            {
+                context.Response.Redirect("/Dashboard/ManagerDashboard");
+            }
+            else if (user.IsInRole("Admin"))
+            {
+                context.Response.Redirect("/Dashboard/AdminDashboard");
+            }
+            else if (user.IsInRole("Student"))
+            {
+                context.Response.Redirect("/Dashboard/StudentDashboard");
+            }
+            else
+            {
+                context.Response.Redirect("/Dashboard/Index");
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // Configure cookie policy

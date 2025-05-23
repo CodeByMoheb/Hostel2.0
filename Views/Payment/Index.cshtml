@@ -79,7 +79,7 @@
                         @foreach (var payment in Model)
                         {
                             <tr>
-                                <td>@payment.Student.FullName</td>
+                                <td>@payment.Student?.FullName</td>
                                 <td>@payment.Type</td>
                                 <td>@payment.Amount.ToString("C")</td>
                                 <td>@(payment.DueDate?.ToString("MMM dd, yyyy") ?? "N/A")</td>
@@ -91,7 +91,7 @@
                                         @payment.Status
                                     </span>
                                 </td>
-                                <td>@payment.Method</td>
+                                <td>@payment.PaymentMethod</td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@payment.Id" class="btn btn-info btn-sm">
                                         <i class="fas fa-edit"></i>

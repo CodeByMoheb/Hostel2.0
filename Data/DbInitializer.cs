@@ -95,9 +95,7 @@ namespace Hostel2._0.Data
                         PhoneNumber = "1234567890",
                         Email = "test@hostel.com",
                         ManagerId = manager.Id,
-                        IsActive = true,
-                        SubscriptionStartDate = DateTime.Now,
-                        SubscriptionEndDate = DateTime.Now.AddYears(1)
+                        IsActive = true
                     };
 
                     context.Hostels.Add(hostel);

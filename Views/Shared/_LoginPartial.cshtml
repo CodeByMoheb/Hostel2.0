@@ -10,6 +10,20 @@
         <span class="nav-link text-dark">Hello @User.Identity?.Name!</span>
     </li>
     <li class="nav-item">
+        @if (User.IsInRole("Admin"))
+        {
+            <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="AdminDashboard">Dashboard</a>
+        }
+        else if (User.IsInRole("HostelManager"))
+        {
+            <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="ManagerDashboard">Dashboard</a>
+        }
+        else if (User.IsInRole("Student"))
+        {
+            <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="StudentDashboard">Dashboard</a>
+        }
+    </li>
+    <li class="nav-item">
         <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
             <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
         </form>

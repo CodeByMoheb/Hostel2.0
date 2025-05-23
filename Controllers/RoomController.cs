@@ -29,7 +29,7 @@ namespace Hostel2._0.Controllers
             }
 
             var rooms = await _context.Rooms
-                .Include(r => r.Occupants)
+                .Include(r => r.Students)
                 .Where(r => r.HostelId == hostel.Id)
                 .ToListAsync();
 
@@ -56,7 +56,6 @@ namespace Hostel2._0.Controllers
                 }
 
                 room.HostelId = hostel.Id;
-                room.IsAvailable = true;
                 room.CurrentOccupancy = 0;
                 room.CreatedAt = DateTime.UtcNow;
                 room.CreatedBy = userId;
@@ -142,7 +141,7 @@ namespace Hostel2._0.Controllers
             }
 
             var room = await _context.Rooms
-                .Include(r => r.Occupants)
+                .Include(r => r.Students)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (room == null)
@@ -171,7 +170,7 @@ namespace Hostel2._0.Controllers
             }
 
             var room = await _context.Rooms
-                .Include(r => r.Occupants)
+                .Include(r => r.Students)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (room == null)
@@ -201,7 +200,7 @@ namespace Hostel2._0.Controllers
         public async Task<IActionResult> Assign(int id, int studentId)
         {
             var room = await _context.Rooms
-                .Include(r => r.Occupants)
+                .Include(r => r.Students)
                 .FirstOrDefaultAsync(r => r.Id == id);
 
             if (room == null)
@@ -223,7 +222,7 @@ namespace Hostel2._0.Controllers
                 return NotFound("Invalid hostel assignment");
             }
 
-            if (room.Occupants.Count >= room.Capacity)
+            if (room.Students.Count >= room.Capacity)
             {
                 ModelState.AddModelError("", "Room is at full capacity");
                 return View(room);

@@ -3,97 +3,101 @@
     ViewData["Title"] = "Hostel Approval Status";
 }
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card shadow">
-                <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold text-primary">Hostel Approval Status</h6>
-                    <a asp-controller="Dashboard" asp-action="ManagerDashboard" class="btn btn-sm btn-secondary">
-                        <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
-                    </a>
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-white py-3">
+                    <h3 class="mb-0 text-primary">Hostel Approval Status</h3>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h5 class="mb-3">@Model.Hostel.Name</h5>
-                            <p><strong>Address:</strong> @Model.Hostel.Address, @Model.Hostel.City, @Model.Hostel.State @Model.Hostel.PostalCode</p>
-                            <p><strong>Contact:</strong> @Model.Hostel.ContactNumber</p>
-                            <p><strong>Email:</strong> @Model.Hostel.Email</p>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="text-center mb-4">
-                                @switch (Model.ApprovalStatus)
-                                {
-                                    case Hostel2._0.Models.Enums.ApprovalStatus.Pending:
-                                        <div class="mb-3">
-                                            <i class="fas fa-clock fa-4x text-warning"></i>
-                                        </div>
-                                        <h4 class="text-warning">Pending Approval</h4>
-                                        <p class="text-muted">Your hostel registration is under review by our administrators.</p>
-                                        break;
-                                    case Hostel2._0.Models.Enums.ApprovalStatus.Approved:
-                                        <div class="mb-3">
-                                            <i class="fas fa-check-circle fa-4x text-success"></i>
-                                        </div>
-                                        <h4 class="text-success">Approved</h4>
-                                        <p class="text-muted">Your hostel has been approved! You can now start using all features.</p>
-                                        break;
-                                    case Hostel2._0.Models.Enums.ApprovalStatus.Rejected:
-                                        <div class="mb-3">
-                                            <i class="fas fa-times-circle fa-4x text-danger"></i>
-                                        </div>
-                                        <h4 class="text-danger">Rejected</h4>
-                                        <p class="text-muted">Your hostel registration was rejected. Please see comments below.</p>
-                                        break;
-                                    case Hostel2._0.Models.Enums.ApprovalStatus.UnderReview:
-                                        <div class="mb-3">
-                                            <i class="fas fa-search fa-4x text-info"></i>
-                                        </div>
-                                        <h4 class="text-info">Under Review</h4>
-                                        <p class="text-muted">Your hostel is currently being reviewed by our team.</p>
-                                        break;
-                                }
-                            </div>
-                        </div>
-                    </div>
-
-                    @if (!string.IsNullOrEmpty(Model.Comments))
+                    @if (Model.Hostel.Status == "Rejected")
                     {
-                        <div class="alert alert-info mt-4">
-                            <h6 class="font-weight-bold">Admin Comments:</h6>
-                            <p class="mb-0">@Model.Comments</p>
+                        <div class="alert alert-danger mb-4">
+                            <h5 class="alert-heading"><i class="fas fa-times-circle me-2"></i>Hostel Application Rejected</h5>
+                            @if (!string.IsNullOrEmpty(Model.Hostel.RejectionReason))
+                            {
+                                <p class="mb-3">Reason for rejection: <strong>@Model.Hostel.RejectionReason</strong></p>
+                            }
+                            <hr>
+                            <p class="mb-0">You can reapply for approval after addressing the concerns mentioned above.</p>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a asp-action="Reapply" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Reapply for Approval
+                            </a>
                         </div>
                     }
-
-                    <div class="row mt-4">
-                        <div class="col-md-12">
-                            <h6 class="font-weight-bold">Next Steps:</h6>
-                            @switch (Model.ApprovalStatus)
-                            {
-                                case Hostel2._0.Models.Enums.ApprovalStatus.Pending:
-                                    <p>Please wait while our administrators review your hostel registration. This typically takes 1-2 business days.</p>
-                                    break;
-                                case Hostel2._0.Models.Enums.ApprovalStatus.Approved:
-                                    <p>Your hostel is now active! The next step is to choose a subscription plan.</p>
-                                    <a asp-controller="Hostel" asp-action="ChooseSubscription" class="btn btn-primary mt-2">
-                                        <i class="fas fa-credit-card me-1"></i> Choose Subscription Plan
-                                    </a>
-                                    break;
-                                case Hostel2._0.Models.Enums.ApprovalStatus.Rejected:
-                                    <p>Please review the admin comments above and make necessary changes to your hostel information.</p>
-                                    <a asp-controller="Hostel" asp-action="Create" class="btn btn-primary mt-2">
-                                        <i class="fas fa-edit me-1"></i> Update Hostel Information
-                                    </a>
-                                    break;
-                                case Hostel2._0.Models.Enums.ApprovalStatus.UnderReview:
-                                    <p>Our team is reviewing additional information about your hostel. We may contact you for more details.</p>
-                                    break;
-                            }
+                    else if (!Model.Hostel.IsActive)
+                    {
+                        <div class="alert alert-warning mb-4">
+                            <h5 class="alert-heading"><i class="fas fa-hourglass-half me-2"></i>Hostel Pending Approval</h5>
+                            <p class="mb-0">Your hostel "<strong>@Model.Hostel.Name</strong>" is currently under review. We'll notify you once it's approved.</p>
                         </div>
-                    </div>
+
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Hostel Details</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <th style="width: 200px;">Hostel Name</th>
+                                            <td>@Model.Hostel.Name</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Address</th>
+                                            <td>@Model.Hostel.Address</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Contact</th>
+                                            <td>
+                                                <div>Email: @Model.Hostel.Email</div>
+                                                <div>Phone: @Model.Hostel.PhoneNumber</div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Join Code</th>
+                                            <td><code>@Model.Hostel.JoinCode</code></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success mb-4">
+                            <h5 class="alert-heading"><i class="fas fa-check-circle me-2"></i>Hostel Approved</h5>
+                            <p class="mb-0">Your hostel "<strong>@Model.Hostel.Name</strong>" has been approved and is now active.</p>
+                        </div>
+
+                        <div class="d-grid">
+                            <a asp-controller="Dashboard" asp-action="ManagerDashboard" class="btn btn-success btn-lg">
+                                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                            </a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Styles {
+    <style>
+    .rounded-top-lg {
+        border-top-left-radius: .75rem !important;
+        border-top-right-radius: .75rem !important;
+    }
+    .rounded-bottom-lg {
+        border-bottom-left-radius: .75rem !important;
+        border-bottom-right-radius: .75rem !important;
+    }
+    .rounded-lg {
+        border-radius: .75rem !important;
+    }
+    </style>
+} 

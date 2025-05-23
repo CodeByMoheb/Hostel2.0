@@ -22,6 +22,39 @@ namespace Hostel2._0.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Hostel2._0.Models.Activity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActivityType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("HostelId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HostelId");
+
+                    b.ToTable("Activities");
+                });
+
             modelBuilder.Entity("Hostel2._0.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -81,8 +114,8 @@ namespace Hostel2._0.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("Gender")
                         .HasColumnType("int");
@@ -101,8 +134,8 @@ namespace Hostel2._0.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime?>("LicenseExpiryDate")
                         .HasColumnType("datetime2");
@@ -192,7 +225,7 @@ namespace Hostel2._0.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Hostel2._0.Models.Document", b =>
+            modelBuilder.Entity("Hostel2._0.Models.AttendanceRecord", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -200,8 +233,39 @@ namespace Hostel2._0.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("AttendanceRecords");
+                });
+
+            modelBuilder.Entity("Hostel2._0.Models.Document", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -214,6 +278,9 @@ namespace Hostel2._0.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("ExpiryDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("FileName")
                         .IsRequired()
@@ -275,13 +342,11 @@ namespace Hostel2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("HostelId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Documents", (string)null);
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.Hostel", b =>
@@ -297,9 +362,6 @@ namespace Hostel2._0.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("CheckInTime")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -309,12 +371,18 @@ namespace Hostel2._0.Migrations
                         .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("City")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ContactNumber")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -356,10 +424,13 @@ namespace Hostel2._0.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("JoinCode")
                         .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("ManagerId")
                         .IsRequired()
@@ -379,36 +450,31 @@ namespace Hostel2._0.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<string>("Phone")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("PostalCode")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("RegistrationCode")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("State")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("SubscriptionEndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SubscriptionPlan")
-                        .IsRequired()
+                    b.Property<string>("RejectionReason")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("SubscriptionStartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -418,12 +484,9 @@ namespace Hostel2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("ManagerId");
 
-                    b.HasIndex("ManagerId")
-                        .IsUnique();
-
-                    b.ToTable("Hostels", (string)null);
+                    b.ToTable("Hostels");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.HostelApproval", b =>
@@ -466,84 +529,10 @@ namespace Hostel2._0.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.HasIndex("HostelId");
+                    b.HasIndex("HostelId")
+                        .IsUnique();
 
-                    b.ToTable("HostelApprovals", (string)null);
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.HostelSubscription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("BillingCycle")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("HostelId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("InvoiceId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastPaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("NextPaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int?>("PaymentMethod")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SubscriptionPlanId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TransactionId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HostelId");
-
-                    b.HasIndex("SubscriptionPlanId");
-
-                    b.ToTable("HostelSubscriptions", (string)null);
+                    b.ToTable("HostelApprovals");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.MaintenanceRequest", b =>
@@ -554,15 +543,15 @@ namespace Hostel2._0.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("AssignedTo")
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Category")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("CompletedDate")
                         .HasColumnType("datetime2");
@@ -584,6 +573,17 @@ namespace Hostel2._0.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("IssueType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -618,272 +618,13 @@ namespace Hostel2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("HostelId");
 
                     b.HasIndex("RoomId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("MaintenanceRequests", (string)null);
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.Meal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("CurrentAttendance")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("HostelId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("MealDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HostelId");
-
-                    b.ToTable("Meals", (string)null);
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.MealPayment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("HostelId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("Month")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudentMealId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TransactionId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HostelId");
-
-                    b.HasIndex("StudentMealId");
-
-                    b.ToTable("MealPayments", (string)null);
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.MealPlan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("BreakfastRate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<decimal>("DinnerRate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Duration")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("HostelId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("LunchRate")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("Price")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HostelId");
-
-                    b.ToTable("MealPlans", (string)null);
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.StudentMeal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("AttendedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsAttended")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsConsumed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("MealDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MealId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MealPlanId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<decimal>("Rate")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MealId");
-
-                    b.HasIndex("MealPlanId");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("StudentMeals", (string)null);
+                    b.ToTable("MaintenanceRequests");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.Notice", b =>
@@ -943,7 +684,7 @@ namespace Hostel2._0.Migrations
 
                     b.HasIndex("HostelId");
 
-                    b.ToTable("Notices", (string)null);
+                    b.ToTable("Notices");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.NoticeRecipient", b =>
@@ -953,9 +694,6 @@ namespace Hostel2._0.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -980,13 +718,11 @@ namespace Hostel2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("NoticeId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("NoticeRecipient", (string)null);
+                    b.ToTable("NoticeRecipient");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.Payment", b =>
@@ -998,11 +734,7 @@ namespace Hostel2._0.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1020,15 +752,18 @@ namespace Hostel2._0.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Method")
-                        .HasColumnType("int");
-
                     b.Property<string>("Notes")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaymentProof")
                         .HasMaxLength(200)
@@ -1045,17 +780,11 @@ namespace Hostel2._0.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentId")
+                    b.Property<int?>("StudentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("SubscriptionPlan")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("TransactionId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
@@ -1069,15 +798,13 @@ namespace Hostel2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("HostelId");
 
                     b.HasIndex("RoomId");
 
                     b.HasIndex("StudentId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.Room", b =>
@@ -1087,9 +814,6 @@ namespace Hostel2._0.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Block")
                         .IsRequired()
@@ -1121,9 +845,6 @@ namespace Hostel2._0.Migrations
                     b.Property<int>("HostelId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -1148,11 +869,9 @@ namespace Hostel2._0.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("HostelId");
 
-                    b.ToTable("Rooms", (string)null);
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.Student", b =>
@@ -1202,6 +921,9 @@ namespace Hostel2._0.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsManagerCreated")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1216,6 +938,9 @@ namespace Hostel2._0.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("RegistrationCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("RoomId")
                         .HasColumnType("int");
@@ -1245,82 +970,7 @@ namespace Hostel2._0.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Students", (string)null);
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.SubscriptionPlan", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("DurationInDays")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IncludesAPIAccess")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IncludesAttendanceTracking")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IncludesMealManagement")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IncludesPaymentManagement")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IncludesReporting")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MaxRooms")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MaxStudents")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("MonthlyPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<decimal>("YearlyPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SubscriptionPlans", (string)null);
+                    b.ToTable("Students");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -1403,10 +1053,12 @@ namespace Hostel2._0.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -1443,10 +1095,12 @@ namespace Hostel2._0.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -1456,6 +1110,17 @@ namespace Hostel2._0.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Hostel2._0.Models.Activity", b =>
+                {
+                    b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
+                        .WithMany()
+                        .HasForeignKey("HostelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hostel");
+                });
+
             modelBuilder.Entity("Hostel2._0.Models.ApplicationUser", b =>
                 {
                     b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
@@ -1463,22 +1128,36 @@ namespace Hostel2._0.Migrations
                         .HasForeignKey("HostelId");
 
                     b.HasOne("Hostel2._0.Models.Room", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId");
+                        .WithMany("Students")
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Hostel");
 
                     b.Navigation("Room");
                 });
 
+            modelBuilder.Entity("Hostel2._0.Models.AttendanceRecord", b =>
+                {
+                    b.HasOne("Hostel2._0.Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+
+                    b.HasOne("Hostel2._0.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Room");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("Hostel2._0.Models.Document", b =>
                 {
-                    b.HasOne("Hostel2._0.Models.ApplicationUser", null)
-                        .WithMany("Documents")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
-                        .WithMany("Documents")
+                        .WithMany()
                         .HasForeignKey("HostelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1494,14 +1173,10 @@ namespace Hostel2._0.Migrations
 
             modelBuilder.Entity("Hostel2._0.Models.Hostel", b =>
                 {
-                    b.HasOne("Hostel2._0.Models.ApplicationUser", null)
-                        .WithMany("ManagedHostels")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Hostel2._0.Models.ApplicationUser", "Manager")
-                        .WithOne()
-                        .HasForeignKey("Hostel2._0.Models.Hostel", "ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("ManagedHostels")
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Manager");
@@ -1514,8 +1189,8 @@ namespace Hostel2._0.Migrations
                         .HasForeignKey("AdminId");
 
                     b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
-                        .WithMany()
-                        .HasForeignKey("HostelId")
+                        .WithOne()
+                        .HasForeignKey("Hostel2._0.Models.HostelApproval", "HostelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1524,40 +1199,18 @@ namespace Hostel2._0.Migrations
                     b.Navigation("Hostel");
                 });
 
-            modelBuilder.Entity("Hostel2._0.Models.HostelSubscription", b =>
-                {
-                    b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("HostelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hostel2._0.Models.SubscriptionPlan", "SubscriptionPlan")
-                        .WithMany("Subscriptions")
-                        .HasForeignKey("SubscriptionPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hostel");
-
-                    b.Navigation("SubscriptionPlan");
-                });
-
             modelBuilder.Entity("Hostel2._0.Models.MaintenanceRequest", b =>
                 {
-                    b.HasOne("Hostel2._0.Models.ApplicationUser", null)
-                        .WithMany("MaintenanceRequests")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
-                        .WithMany("MaintenanceRequests")
+                        .WithMany()
                         .HasForeignKey("HostelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Hostel2._0.Models.Room", "Room")
                         .WithMany("MaintenanceRequests")
-                        .HasForeignKey("RoomId");
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Hostel2._0.Models.Student", "Student")
                         .WithMany("MaintenanceRequests")
@@ -1566,72 +1219,6 @@ namespace Hostel2._0.Migrations
                     b.Navigation("Hostel");
 
                     b.Navigation("Room");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.Meal", b =>
-                {
-                    b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
-                        .WithMany("Meals")
-                        .HasForeignKey("HostelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hostel");
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.MealPayment", b =>
-                {
-                    b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
-                        .WithMany()
-                        .HasForeignKey("HostelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hostel2._0.Models.MealManagement.StudentMeal", "StudentMeal")
-                        .WithMany("Payments")
-                        .HasForeignKey("StudentMealId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hostel");
-
-                    b.Navigation("StudentMeal");
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.MealPlan", b =>
-                {
-                    b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
-                        .WithMany("MealPlans")
-                        .HasForeignKey("HostelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Hostel");
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.StudentMeal", b =>
-                {
-                    b.HasOne("Hostel2._0.Models.MealManagement.Meal", "Meal")
-                        .WithMany("StudentMeals")
-                        .HasForeignKey("MealId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Hostel2._0.Models.MealManagement.MealPlan", "MealPlan")
-                        .WithMany("StudentMeals")
-                        .HasForeignKey("MealPlanId");
-
-                    b.HasOne("Hostel2._0.Models.Student", "Student")
-                        .WithMany("StudentMeals")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Meal");
-
-                    b.Navigation("MealPlan");
 
                     b.Navigation("Student");
                 });
@@ -1649,10 +1236,6 @@ namespace Hostel2._0.Migrations
 
             modelBuilder.Entity("Hostel2._0.Models.NoticeRecipient", b =>
                 {
-                    b.HasOne("Hostel2._0.Models.ApplicationUser", null)
-                        .WithMany("NoticeRecipients")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Hostel2._0.Models.Notice", "Notice")
                         .WithMany("Recipients")
                         .HasForeignKey("NoticeId")
@@ -1672,12 +1255,8 @@ namespace Hostel2._0.Migrations
 
             modelBuilder.Entity("Hostel2._0.Models.Payment", b =>
                 {
-                    b.HasOne("Hostel2._0.Models.ApplicationUser", null)
-                        .WithMany("Payments")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("HostelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1688,9 +1267,7 @@ namespace Hostel2._0.Migrations
 
                     b.HasOne("Hostel2._0.Models.Student", "Student")
                         .WithMany("Payments")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("StudentId");
 
                     b.Navigation("Hostel");
 
@@ -1701,14 +1278,10 @@ namespace Hostel2._0.Migrations
 
             modelBuilder.Entity("Hostel2._0.Models.Room", b =>
                 {
-                    b.HasOne("Hostel2._0.Models.ApplicationUser", null)
-                        .WithMany("OccupiedRooms")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
                         .WithMany("Rooms")
                         .HasForeignKey("HostelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Hostel");
@@ -1719,11 +1292,11 @@ namespace Hostel2._0.Migrations
                     b.HasOne("Hostel2._0.Models.Hostel", "Hostel")
                         .WithMany("Students")
                         .HasForeignKey("HostelId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Hostel2._0.Models.Room", "Room")
-                        .WithMany("Occupants")
+                        .WithMany()
                         .HasForeignKey("RoomId");
 
                     b.HasOne("Hostel2._0.Models.ApplicationUser", "User")
@@ -1792,53 +1365,16 @@ namespace Hostel2._0.Migrations
 
             modelBuilder.Entity("Hostel2._0.Models.ApplicationUser", b =>
                 {
-                    b.Navigation("Documents");
-
-                    b.Navigation("MaintenanceRequests");
-
                     b.Navigation("ManagedHostels");
-
-                    b.Navigation("NoticeRecipients");
-
-                    b.Navigation("OccupiedRooms");
-
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.Hostel", b =>
                 {
-                    b.Navigation("Documents");
-
-                    b.Navigation("MaintenanceRequests");
-
-                    b.Navigation("MealPlans");
-
-                    b.Navigation("Meals");
-
                     b.Navigation("Notices");
-
-                    b.Navigation("Payments");
 
                     b.Navigation("Rooms");
 
                     b.Navigation("Students");
-
-                    b.Navigation("Subscriptions");
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.Meal", b =>
-                {
-                    b.Navigation("StudentMeals");
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.MealPlan", b =>
-                {
-                    b.Navigation("StudentMeals");
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.MealManagement.StudentMeal", b =>
-                {
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.Notice", b =>
@@ -1850,7 +1386,7 @@ namespace Hostel2._0.Migrations
                 {
                     b.Navigation("MaintenanceRequests");
 
-                    b.Navigation("Occupants");
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("Hostel2._0.Models.Student", b =>
@@ -1860,13 +1396,6 @@ namespace Hostel2._0.Migrations
                     b.Navigation("MaintenanceRequests");
 
                     b.Navigation("Payments");
-
-                    b.Navigation("StudentMeals");
-                });
-
-            modelBuilder.Entity("Hostel2._0.Models.SubscriptionPlan", b =>
-                {
-                    b.Navigation("Subscriptions");
                 });
 #pragma warning restore 612, 618
         }

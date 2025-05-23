@@ -15,20 +15,33 @@
 
     <div class="card">
         <div class="card-body">
-            <form asp-action="Edit">
+            <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
                 <input type="hidden" asp-for="HostelId" />
+                <input type="hidden" asp-for="UserId" />
+                <input type="hidden" asp-for="CreatedAt" />
+                <input type="hidden" asp-for="CreatedBy" />
 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label asp-for="Name" class="control-label">Full Name</label>
-                            <input asp-for="Name" class="form-control" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <label asp-for="FirstName" class="control-label">First Name</label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
                         </div>
                     </div>
 
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="LastName" class="control-label">Last Name</label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label asp-for="StudentId" class="control-label">Student ID</label>
@@ -36,9 +49,7 @@
                             <span asp-validation-for="StudentId" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label asp-for="Email" class="control-label">Email</label>
@@ -46,7 +57,9 @@
                             <span asp-validation-for="Email" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
 
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label asp-for="PhoneNumber" class="control-label">Phone Number</label>
@@ -54,17 +67,17 @@
                             <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label asp-for="DateOfBirth" class="control-label">Date of Birth</label>
-                            <input asp-for="DateOfBirth" class="form-control" type="date" />
+                            <input asp-for="DateOfBirth" class="form-control" type="date" placeholder="YYYY-MM-DD" />
                             <span asp-validation-for="DateOfBirth" class="text-danger"></span>
                         </div>
                     </div>
+                </div>
 
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label asp-for="Gender" class="control-label">Gender</label>
@@ -72,6 +85,16 @@
                                 <option value="">Select Gender</option>
                             </select>
                             <span asp-validation-for="Gender" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label asp-for="RoomId" class="control-label">Room</label>
+                            <select asp-for="RoomId" class="form-select" asp-items="ViewBag.Rooms">
+                                <option value="">Select Room</option>
+                            </select>
+                            <span asp-validation-for="RoomId" class="text-danger"></span>
                         </div>
                     </div>
                 </div>

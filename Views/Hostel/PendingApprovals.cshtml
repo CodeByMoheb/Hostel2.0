@@ -3,52 +3,93 @@
     ViewData["Title"] = "Pending Hostel Approvals";
 }
 
-<div class="container-fluid">
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Pending Hostel Approvals</h6>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Pending Hostel Approvals</h1>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-lg">
+        <div class="card-header bg-transparent border-bottom-0 py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Hostels Awaiting Review</h6>
         </div>
         <div class="card-body">
             @if (!Model.Any())
             {
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i>
-                    No pending hostel approvals at this time.
+                <div class="text-center py-5">
+                    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                    <h4 class="text-muted">All Clear!</h4>
+                    <p class="text-muted fs-5">There are no pending hostel approvals at this time.</p>
                 </div>
             }
             else
             {
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                        <thead>
+                    <table class="table table-hover align-middle" id="pendingHostelsTable" width="100%" cellspacing="0">
+                        <thead class="table-light">
                             <tr>
-                                <th>Name</th>
+                                <th>Hostel Name</th>
                                 <th>Manager</th>
                                 <th>Location</th>
                                 <th>Contact</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
+                                <th>Requested On</th>
+                                <th>Status</th>
+                                <th class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var hostel in Model)
                             {
                                 <tr>
-                                    <td>@hostel.Name</td>
+                                    <td><strong>@hostel.Name</strong></td>
                                     <td>@($"{hostel.Manager?.FirstName} {hostel.Manager?.LastName}")</td>
                                     <td>@($"{hostel.City}, {hostel.State}")</td>
                                     <td>
-                                        <div>@hostel.Email</div>
-                                        <div>@hostel.ContactNumber</div>
+                                        <div class="small"><i class="fas fa-envelope me-1 text-muted"></i> @hostel.Email</div>
+                                        <div class="small"><i class="fas fa-phone me-1 text-muted"></i> @hostel.ContactNumber</div>
                                     </td>
-                                    <td>@hostel.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                    <td>@hostel.CreatedAt.ToString("MMM dd, yyyy hh:mm tt")</td>
                                     <td>
-                                        <form asp-action="ApproveHostel" asp-route-id="@hostel.Id" method="post" style="display: inline;">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-success btn-sm">
-                                                <i class="fas fa-check"></i> Approve
+                                        @if (hostel.Status == "Rejected")
+                                        {
+                                            <span class="badge bg-danger">Rejected</span>
+                                        }
+                                        else if (!hostel.IsActive)
+                                        {
+                                            <span class="badge bg-warning">Pending</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">Approved</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        @if (!hostel.IsActive && hostel.Status != "Rejected")
+                                        {
+                                            <form asp-action="ApproveHostel" asp-route-id="@hostel.Id" method="post" class="d-inline approve-form" data-hostel-name="@hostel.Name">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-success btn-sm px-3">
+                                                    <i class="fas fa-check me-1"></i> Approve
+                                                </button>
+                                            </form>
+                                            <form asp-action="RejectHostel" asp-route-id="@hostel.Id" method="post" class="d-inline reject-form ms-1" data-hostel-name="@hostel.Name">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-danger btn-sm px-3">
+                                                    <i class="fas fa-times me-1"></i> Reject
+                                                </button>
+                                            </form>
+                                        }
+                                        else if (hostel.Status == "Rejected")
+                                        {
+                                            <button class="btn btn-secondary btn-sm px-3" disabled>
+                                                <i class="fas fa-ban me-1"></i> Rejected
                                             </button>
-                                        </form>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-success btn-sm px-3" disabled>
+                                                <i class="fas fa-check me-1"></i> Approved
+                                            </button>
+                                        }
                                     </td>
                                 </tr>
                             }
@@ -61,9 +102,77 @@
 </div>
 
 @section Scripts {
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         $(document).ready(function() {
-            $('#dataTable').DataTable();
+            $('#pendingHostelsTable').DataTable({
+                "order": [[4, "desc"]], // Default sort by 'Requested On' descending
+                "language": {
+                    "emptyTable": "No pending approvals to display."
+                }
+            });
+
+            $('.approve-form').on('submit', function(e) {
+                e.preventDefault();
+                var form = this;
+                var hostelName = $(this).data('hostel-name');
+                
+                Swal.fire({
+                    title: 'Approve Hostel?',
+                    text: `Are you sure you want to approve "${hostelName}"?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, approve it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+            $('.reject-form').on('submit', function(e) {
+                e.preventDefault();
+                var form = this;
+                var hostelName = $(this).data('hostel-name');
+                
+                Swal.fire({
+                    title: 'Reject Hostel?',
+                    text: `Are you sure you want to reject "${hostelName}"?`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, reject it!',
+                    input: 'textarea',
+                    inputLabel: 'Rejection Reason',
+                    inputPlaceholder: 'Please provide a reason for rejection...',
+                    inputAttributes: {
+                        'aria-label': 'Rejection reason'
+                    },
+                    showCancelButton: true,
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'You need to provide a reason for rejection!';
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Add the rejection reason to the form
+                        var reasonInput = $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('name', 'rejectionReason')
+                            .val(result.value);
+                        form.append(reasonInput);
+                        form.submit();
+                    }
+                });
+            });
         });
     </script>
 } 

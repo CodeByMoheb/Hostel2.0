@@ -1,80 +1,72 @@
 @model Hostel2._0.Models.ViewModels.HostelCreateViewModel
 @{
-    ViewData["Title"] = "Create Hostel";
+    ViewData["Title"] = "Create New Hostel";
 }
-<div class="container">
+
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header">
-                    <h2 class="text-center mb-0">Create New Hostel</h2>
+        <div class="col-lg-6 col-md-8">
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top-lg">
+                    <i class="fas fa-building fa-3x mb-3"></i>
+                    <h2 class="mb-0">Set Up Your Hostel</h2>
+                    <p class="mb-0 opacity-75">Let's get your hostel registered in our system.</p>
                 </div>
-                <div class="card-body">
-                    <form asp-action="Create" method="post">
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                        <div class="form-group mb-3">
-                            <label asp-for="Name" class="control-label"></label>
-                            <input asp-for="Name" class="form-control" />
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Create" method="post" class="needs-validation" novalidate>
+                        @Html.AntiForgeryToken()
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fs-5"><i class="fas fa-signature me-2 text-muted"></i>Hostel Name</label>
+                            <input asp-for="Name" class="form-control form-control-lg" placeholder="e.g., Sunshine Student Living" required />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                            <div class="invalid-feedback">Please enter a name for your hostel.</div>
                         </div>
-
-                        <div class="form-group mb-3">
-                            <label asp-for="Address" class="control-label"></label>
-                            <input asp-for="Address" class="form-control" />
-                            <span asp-validation-for="Address" class="text-danger"></span>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="City" class="control-label"></label>
-                                    <input asp-for="City" class="form-control" />
-                                    <span asp-validation-for="City" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="State" class="control-label"></label>
-                                    <input asp-for="State" class="form-control" />
-                                    <span asp-validation-for="State" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="PostalCode" class="control-label"></label>
-                                    <input asp-for="PostalCode" class="form-control" />
-                                    <span asp-validation-for="PostalCode" class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="ContactNumber" class="control-label"></label>
-                                    <input asp-for="ContactNumber" class="form-control" />
-                                    <span asp-validation-for="ContactNumber" class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group mb-4">
-                            <label asp-for="Email" class="control-label"></label>
-                            <input asp-for="Email" class="form-control" />
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group text-center">
-                            <button type="submit" class="btn btn-primary">Create Hostel</button>
-                            <a asp-controller="Dashboard" asp-action="ManagerDashboard" class="btn btn-secondary">Cancel</a>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus-circle me-2"></i> Create Hostel & Proceed
+                            </button>
                         </div>
                     </form>
+                </div>
+                <div class="card-footer text-center bg-light py-3 rounded-bottom-lg">
+                    <small class="text-muted">Once created, your hostel will be submitted for admin approval.</small>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Bootstrap custom validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms)
+                .forEach(function (form) {
+                    form.addEventListener('submit', function (event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+    </script>
+    <style>
+    .rounded-top-lg {
+        border-top-left-radius: .75rem !important;
+        border-top-right-radius: .75rem !important;
+    }
+    .rounded-bottom-lg {
+        border-bottom-left-radius: .75rem !important;
+        border-bottom-right-radius: .75rem !important;
+    }
+    .rounded-lg {
+        border-radius: .75rem !important;
+    }
+</style>
 } 

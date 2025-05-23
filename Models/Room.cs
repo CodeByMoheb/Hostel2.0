@@ -10,7 +10,7 @@ namespace Hostel2._0.Models
     {
         public Room()
         {
-            Occupants = new List<Student>();
+            Students = new List<ApplicationUser>();
             MaintenanceRequests = new List<MaintenanceRequest>();
         }
 
@@ -32,19 +32,22 @@ namespace Hostel2._0.Models
         [StringLength(500)]
         public string? Description { get; set; }
 
+        [Required]
         public int Capacity { get; set; }
         public int CurrentOccupancy { get; set; }
         
+        [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal MonthlyRent { get; set; }
         
-        public bool IsAvailable { get; set; }
+        public bool IsAvailable => CurrentOccupancy < Capacity;
 
+        [Required]
         [ForeignKey("Hostel")]
         public int HostelId { get; set; }
         public Hostel? Hostel { get; set; }
 
-        public ICollection<Student> Occupants { get; set; }
+        public ICollection<ApplicationUser> Students { get; set; }
         public ICollection<MaintenanceRequest> MaintenanceRequests { get; set; }
 
         [StringLength(450)]

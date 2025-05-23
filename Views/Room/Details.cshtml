@@ -38,15 +38,15 @@
                         <dd class="col-sm-8">@Model.Capacity</dd>
 
                         <dt class="col-sm-4">Current Occupants</dt>
-                        <dd class="col-sm-8">@Model.Occupants.Count / @Model.Capacity</dd>
+                        <dd class="col-sm-8">@Model.Students.Count / @Model.Capacity</dd>
 
                         <dt class="col-sm-4">Status</dt>
                         <dd class="col-sm-8">
-                            @if (Model.Occupants.Count >= Model.Capacity)
+                            @if (Model.Students.Count >= Model.Capacity)
                             {
                                 <span class="badge bg-danger">Full</span>
                             }
-                            else if (Model.Occupants.Count > 0)
+                            else if (Model.Students.Count > 0)
                             {
                                 <span class="badge bg-warning">Partially Occupied</span>
                             }
@@ -67,7 +67,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Current Occupants</h5>
-                    @if (Model.Occupants.Count < Model.Capacity)
+                    @if (Model.Students.Count < Model.Capacity)
                     {
                         <a asp-action="Assign" asp-route-id="@Model.Id" class="btn btn-success btn-sm">
                             <i class="fas fa-user-plus"></i> Assign Student
@@ -75,7 +75,7 @@
                     }
                 </div>
                 <div class="card-body">
-                    @if (Model.Occupants.Any())
+                    @if (Model.Students.Any())
                     {
                         <div class="table-responsive">
                             <table class="table table-sm">
@@ -88,7 +88,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var student in Model.Occupants)
+                                    @foreach (var student in Model.Students)
                                     {
                                         <tr>
                                             <td>@student.Name</td>

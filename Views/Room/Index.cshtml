@@ -34,13 +34,13 @@
                                 <td>@item.Type</td>
                                 <td>@item.Floor</td>
                                 <td>@item.Capacity</td>
-                                <td>@item.Occupants.Count / @item.Capacity</td>
+                                <td>@item.Students.Count / @item.Capacity</td>
                                 <td>
-                                    @if (item.Occupants.Count >= item.Capacity)
+                                    @if (item.Students.Count >= item.Capacity)
                                     {
                                         <span class="badge bg-danger">Full</span>
                                     }
-                                    else if (item.Occupants.Count > 0)
+                                    else if (item.Students.Count > 0)
                                     {
                                         <span class="badge bg-warning">Partially Occupied</span>
                                     }
@@ -57,7 +57,7 @@
                                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        @if (item.Occupants.Count < item.Capacity)
+                                        @if (item.Students.Count < item.Capacity)
                                         {
                                             <a asp-action="Assign" asp-route-id="@item.Id" class="btn btn-success btn-sm">
                                                 <i class="fas fa-user-plus"></i>

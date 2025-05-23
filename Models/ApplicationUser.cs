@@ -10,11 +10,11 @@ namespace Hostel2._0.Models
     public class ApplicationUser : IdentityUser
     {
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string FirstName { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string LastName { get; set; } = string.Empty;
 
         [StringLength(100)]
@@ -90,11 +90,6 @@ namespace Hostel2._0.Models
 
         // Navigation properties
         public virtual ICollection<Hostel> ManagedHostels { get; set; } = new HashSet<Hostel>();
-        public virtual ICollection<Room> OccupiedRooms { get; set; } = new HashSet<Room>();
-        public virtual ICollection<Payment> Payments { get; set; } = new HashSet<Payment>();
-        public virtual ICollection<MaintenanceRequest> MaintenanceRequests { get; set; } = new HashSet<MaintenanceRequest>();
-        public virtual ICollection<Document> Documents { get; set; } = new HashSet<Document>();
-        public virtual ICollection<NoticeRecipient> NoticeRecipients { get; set; } = new HashSet<NoticeRecipient>();
 
         // Audit fields
         public DateTime CreatedAt { get; set; }
@@ -103,14 +98,9 @@ namespace Hostel2._0.Models
         public ApplicationUser()
         {
             ManagedHostels = new HashSet<Hostel>();
-            OccupiedRooms = new HashSet<Room>();
-            Payments = new HashSet<Payment>();
-            MaintenanceRequests = new HashSet<MaintenanceRequest>();
-            Documents = new HashSet<Document>();
-            NoticeRecipients = new HashSet<NoticeRecipient>();
             CreatedAt = DateTime.UtcNow;
         }
 
-        public string FullName => $"{FirstName} {LastName}";
+        public string Name => $"{FirstName} {LastName}";
     }
 } 

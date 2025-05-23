@@ -1,531 +1,314 @@
-@model Hostel2._0.Models.ViewModels.StudentDashboardViewModel
+@model Hostel2._0.Models.ViewModels.DashboardViewModels.StudentDashboardViewModel
 @using Hostel2._0.Models.Enums
 @{
     ViewData["Title"] = "Student Dashboard";
 }
-
-<div class="container-fluid dashboard-container">
-    <!-- Welcome Section with Animation -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="welcome-card animate__animated animate__fadeIn">
-                <div class="welcome-content">
-                    <h1 class="welcome-title">Welcome, @Model.Student.FirstName!</h1>
-                    <p class="welcome-subtitle">Here's your hostel overview</p>
-                </div>
-                <div class="welcome-time">
-                    <div id="currentTime" class="time-display"></div>
-                    <div id="currentDate" class="date-display"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @if (!Model.IsApproved)
+@section Styles {
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body, .container-fluid { font-family: 'Inter', Arial, sans-serif; background: linear-gradient(135deg, #e0e7ff 0%, #f4f6fa 100%); }
+        .welcome-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, #1976D2 70%, #00BFAE);
+            color: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(25,118,210,0.09);
+            padding: 0.7rem 1.5rem;
+            margin-bottom: 1.2rem;
+            animation: fadeIn 0.7s;
+        }
+        .welcome-avatar {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            color: #1976D2;
+            box-shadow: 0 2px 8px rgba(0,191,174,0.13);
+            margin-right: 1rem;
+        }
+        .welcome-name {
+            font-size: 1.13rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .profile-btn {
+            background: #fff;
+            color: #1976D2;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.01rem;
+            padding: 0.4rem 1.2rem;
+            border: none;
+            transition: background 0.18s, color 0.18s;
+            box-shadow: 0 2px 8px rgba(67,160,71,0.09);
+        }
+        .profile-btn:hover { background: #1976D2; color: #fff; }
+        .stat-row {
+            display: flex;
+            gap: 1.1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 13px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 0.8rem 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 150px;
+            flex: 1 1 150px;
+            animation: fadeInUp 0.7s;
+        }
+        .stat-icon { font-size: 1.3rem; margin-bottom: 0.3rem; opacity: 0.85; }
+        .stat-value { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.05rem; color: #1976D2; }
+        .stat-label { font-size: 0.97rem; color: #888; font-weight: 500; }
+        .pay-btn { background: #43A047; color: #fff; border-radius: 8px; font-weight: 600; font-size: 1.01rem; padding: 0.5rem 1.5rem; border: none; transition: background 0.18s, box-shadow 0.18s; box-shadow: 0 2px 8px rgba(67,160,71,0.09); }
+        .pay-btn:hover { background: #1976D2; color: #fff; }
+        .table th, .table td { font-size: 0.97rem; padding: 0.5rem 0.8rem; }
+        .table th { font-weight: 600; color: #1976D2; background: #F4F6FA; }
+        .badge { border-radius: 6px; font-size: 0.85rem; padding: 0.3em 0.7em; font-weight: 500; }
+        .bg-success { background: #43A047 !important; color: #fff !important; }
+        .bg-warning { background: #FFA000 !important; color: #333 !important; }
+        .bg-info { background: #1976D2 !important; color: #fff !important; }
+        .bg-danger { background: #E74C3C !important; color: #fff !important; }
+        @@keyframes fadeIn { from { opacity: 0; transform: translateY(-20px);} to { opacity: 1; transform: translateY(0);} }
+        @@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: translateY(0);} }
+        .section-header {
+            font-size: 1.13rem;
+            font-weight: 700;
+            color: #1976D2;
+            margin-bottom: 0.7rem;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-left: 4px solid #00BFAE;
+            padding-left: 0.6rem;
+        }
+        .dashboard-card {
+            background: #fff;
+            border-radius: 13px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 1.1rem 1.2rem;
+            margin-bottom: 1.1rem;
+            animation: fadeIn 0.7s;
+        }
+    </style>
+}
+<div class="container-fluid py-4">
+    @if (TempData["SuccessMessage"] != null)
     {
-        <div class="row">
-            <div class="col-12">
-                <div class="alert alert-warning animate__animated animate__fadeIn">
-                    <i class="fas fa-clock me-2"></i>
-                    <strong>Pending Approval</strong>
-                    <p class="mb-0">Your hostel application is pending approval. You'll be notified once it's approved.</p>
-                </div>
-            </div>
+        <div class="alert alert-success" role="alert">
+            @Html.Raw(TempData["SuccessMessage"])
         </div>
     }
-    else if (!Model.HasRoom)
-    {
-        <div class="row">
-            <div class="col-12">
-                <div class="alert alert-info animate__animated animate__fadeIn">
-                    <i class="fas fa-bed me-2"></i>
-                    <strong>No Room Assigned</strong>
-                    <p class="mb-0">You haven't been assigned a room yet. Please contact your hostel manager.</p>
-                </div>
+    <!-- Welcome Bar -->
+    <div class="welcome-bar">
+        <div style="display: flex; align-items: center;">
+            <div class="welcome-avatar">
+                <i class="fas fa-user-circle"></i>
             </div>
+            <span class="welcome-name">Welcome, @Model.Student.FullName</span>
         </div>
-    }
-
-    <!-- Statistics Cards with Hover Effects -->
-    <div class="row g-3 mb-4">
-        <div class="col-xl-3 col-md-6">
-            <div class="stat-card payment-card animate__animated animate__fadeInUp">
-                <div class="stat-icon">
-                    <i class="fas fa-money-bill-wave"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-title">Total Paid</h3>
-                    <div class="stat-value">@Model.TotalPaidAmount.ToString("C")</div>
-                </div>
-            </div>
+        <a href="/Student/Profile" class="profile-btn"><i class="fas fa-id-card"></i> View Profile</a>
+    </div>
+    <!-- Metrics Row -->
+    <div class="stat-row">
+        <div class="stat-card">
+            <i class="fas fa-money-bill-wave stat-icon text-success"></i>
+            <span class="stat-label">Total Paid</span>
+            <span class="stat-value">৳@Model.TotalPaidAmount.ToString("N2")</span>
         </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="stat-card pending-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
+        <div class="stat-card">
+            <i class="fas fa-file-invoice-dollar stat-icon text-warning"></i>
+            <span class="stat-label">Pending Payment</span>
+            <span class="stat-value">৳@Model.PendingPaymentAmount.ToString("N2")</span>
+            @if (Model.PendingPaymentAmount > 0)
+            {
+                <div class="mt-2">
+                    <a href="/Payment/Pay" class="btn btn-warning btn-lg w-100">
+                        <i class="fas fa-credit-card"></i> Pay Now
+                    </a>
+                    <small class="text-muted d-block mt-2">
+                        <i class="fas fa-info-circle"></i> Click to pay your pending dues
+                    </small>
                 </div>
-                <div class="stat-content">
-                    <h3 class="stat-title">Pending Payment</h3>
-                    <div class="stat-value">@Model.PendingPaymentAmount.ToString("C")</div>
+            }
+            else
+            {
+                <div class="mt-2">
+                    <span class="badge bg-success">All Paid</span>
                 </div>
-            </div>
+            }
         </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="stat-card attendance-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
-                <div class="stat-icon">
-                    <i class="fas fa-calendar-check"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-title">Attendance</h3>
-                    <div class="stat-value">@Model.AttendancePercentage%</div>
-                    <div class="progress mt-2">
-                        <div class="progress-bar" role="progressbar" style="width: @Model.AttendancePercentage%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6">
-            <div class="stat-card maintenance-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
-                <div class="stat-icon">
-                    <i class="fas fa-tools"></i>
-                </div>
-                <div class="stat-content">
-                    <h3 class="stat-title">Pending Requests</h3>
-                    <div class="stat-value">@Model.PendingMaintenanceRequests</div>
-                </div>
-            </div>
+        <div class="stat-card">
+            <i class="fas fa-tools stat-icon text-danger"></i>
+            <span class="stat-label">Pending Requests</span>
+            <span class="stat-value">@Model.PendingMaintenanceRequests</span>
         </div>
     </div>
-
-    <!-- Recent Activities with Tabs -->
-    <div class="row">
-        <div class="col-12">
-            <div class="card activity-card animate__animated animate__fadeIn">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" data-bs-toggle="tab" href="#payments">
-                                <i class="fas fa-money-bill me-2"></i>Payments
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#maintenance">
-                                <i class="fas fa-tools me-2"></i>Maintenance
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#meals">
-                                <i class="fas fa-utensils me-2"></i>Meals
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-bs-toggle="tab" href="#notices">
-                                <i class="fas fa-bell me-2"></i>Notices
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="card-body">
-                    <div class="tab-content">
-                        <!-- Payments Tab -->
-                        <div class="tab-pane fade show active" id="payments">
-                            @if (Model.RecentPayments.Any())
+    <!-- Payment History -->
+    <div class="section">
+        <div class="section-header">
+            <i class="fas fa-receipt"></i> Recent Payments
+            @if (Model.PendingPaymentAmount > 0)
+            {
+                <a href="/Payment/Pay" class="btn btn-warning btn-sm float-end">
+                    <i class="fas fa-credit-card"></i> Pay Pending Dues
+                </a>
+            }
+        </div>
+        <div class="dashboard-card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentPayments.Any())
+                        {
+                            foreach (var payment in Model.RecentPayments)
                             {
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Amount</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var payment in Model.RecentPayments)
-                                            {
-                                                <tr>
-                                                    <td>@payment.PaymentDate.ToShortDateString()</td>
-                                                    <td>@payment.Amount.ToString("C")</td>
-                                                    <td>
-                                                        <span class="badge bg-@(payment.Status == PaymentStatus.Completed ? "success" : "warning")">
-                                                            @payment.Status
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
+                                <tr>
+                                    <td>@payment.PaymentDate.ToString("MMM dd, yyyy")</td>
+                                    <td>৳@payment.Amount.ToString("N2")</td>
+                                    <td>@payment.PaymentMethod</td>
+                                    <td>
+                                        <span class="badge bg-@(payment.Status == PaymentStatus.Completed ? "success" : (payment.Status == PaymentStatus.Pending ? "warning text-dark" : "danger"))">
+                                            @payment.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (payment.Status == PaymentStatus.Completed)
+                                        {
+                                            <a asp-controller="Payment" asp-action="GenerateReceipt" asp-route-id="@payment.Id" class="btn btn-sm btn-info">
+                                                <i class="fas fa-receipt"></i> View Receipt
+                                            </a>
+                                        }
+                                        else if (payment.Status == PaymentStatus.Pending)
+                                        {
+                                            <a href="/Payment/Pay" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-credit-card"></i> Pay Now
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </td>
+                                </tr>
                             }
-                            else
-                            {
-                                <div class="text-center py-4">
-                                    <i class="fas fa-money-bill fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">No recent payments</p>
-                                </div>
-                            }
-                        </div>
-
-                        <!-- Maintenance Tab -->
-                        <div class="tab-pane fade" id="maintenance">
-                            @if (Model.RecentMaintenanceRequests.Any())
-                            {
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Description</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var request in Model.RecentMaintenanceRequests)
-                                            {
-                                                <tr>
-                                                    <td>@request.CreatedAt.ToShortDateString()</td>
-                                                    <td>@request.Description</td>
-                                                    <td>
-                                                        <span class="badge bg-@(request.Status == MaintenanceStatus.Completed ? "success" : "warning")">
-                                                            @request.Status
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="text-center py-4">
-                                    <i class="fas fa-tools fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">No recent maintenance requests</p>
-                                </div>
-                            }
-                        </div>
-
-                        <!-- Meals Tab -->
-                        <div class="tab-pane fade" id="meals">
-                            @if (Model.UpcomingMeals.Any())
-                            {
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Date</th>
-                                                <th>Meal Type</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach (var meal in Model.UpcomingMeals)
-                                            {
-                                                <tr>
-                                                    <td>@meal.MealDate.ToShortDateString()</td>
-                                                    <td>@meal.Meal.Type</td>
-                                                    <td>
-                                                        <span class="badge bg-@(meal.IsConsumed ? "success" : "warning")">
-                                                            @(meal.IsConsumed ? "Consumed" : "Not Consumed")
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            }
-                                        </tbody>
-                                    </table>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="text-center py-4">
-                                    <i class="fas fa-utensils fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">No upcoming meals</p>
-                                </div>
-                            }
-                        </div>
-
-                        <!-- Notices Tab -->
-                        <div class="tab-pane fade" id="notices">
-                            @if (Model.RecentNotices.Any())
-                            {
-                                <div class="notice-list">
-                                    @foreach (var notice in Model.RecentNotices)
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">
+                                    No recent payments to display.
+                                    @if (Model.PendingPaymentAmount > 0)
                                     {
-                                        <div class="notice-item">
-                                            <div class="notice-header">
-                                                <h6 class="notice-title">@notice.Title</h6>
-                                                <small class="text-muted">@notice.CreatedAt.ToShortDateString()</small>
-                                            </div>
-                                            <p class="notice-content">@notice.Content</p>
+                                        <div class="mt-2">
+                                            <a href="/Payment/Pay" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-credit-card"></i> Make Your First Payment
+                                            </a>
                                         </div>
                                     }
-                                </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- Maintenance Requests and Notices Tabs -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="section-header"><i class="fas fa-tools"></i> Recent Maintenance Requests</div>
+                    <a href="/MaintenanceRequest/Create" class="btn btn-success" style="font-weight:600;"><i class="fas fa-plus"></i> Request Maintenance</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentMaintenanceRequests.Any())
+                            {
+                                foreach (var req in Model.RecentMaintenanceRequests)
+                                {
+                                    <tr>
+                                        <td>@req.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                        <td>@req.Title</td>
+                                        <td>
+                                            <span class="badge bg-@(req.Status == MaintenanceStatus.Completed ? "success" : (req.Status == MaintenanceStatus.Pending ? "warning text-dark" : "info"))">
+                                                @req.Status
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
                             }
                             else
                             {
-                                <div class="text-center py-4">
-                                    <i class="fas fa-bell fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">No recent notices</p>
-                                </div>
+                                <tr><td colspan="3" class="text-center text-muted">No maintenance requests found.</td></tr>
                             }
-                        </div>
-                    </div>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <div class="section-header"><i class="fas fa-bullhorn"></i> Recent Notices</div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Title</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentNotices.Any())
+                            {
+                                foreach (var notice in Model.RecentNotices)
+                                {
+                                    <tr>
+                                        <td>@notice.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                        <td>@notice.Title</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="2" class="text-center text-muted">No recent notices found.</td></tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-@section Styles {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <style>
-        .dashboard-container {
-            padding: 1.5rem;
-        }
-
-        .welcome-card {
-            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
-            color: white;
-            border-radius: 15px;
-            padding: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .welcome-title {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .welcome-subtitle {
-            opacity: 0.8;
-            margin-bottom: 0;
-        }
-
-        .welcome-time {
-            text-align: right;
-        }
-
-        .time-display {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
-        .date-display {
-            opacity: 0.8;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .payment-card .stat-icon {
-            background: rgba(78, 115, 223, 0.1);
-            color: #4e73df;
-        }
-
-        .pending-card .stat-icon {
-            background: rgba(246, 194, 62, 0.1);
-            color: #f6c23e;
-        }
-
-        .attendance-card .stat-icon {
-            background: rgba(28, 200, 138, 0.1);
-            color: #1cc88a;
-        }
-
-        .maintenance-card .stat-icon {
-            background: rgba(231, 74, 59, 0.1);
-            color: #e74a3b;
-        }
-
-        .stat-content {
-            flex: 1;
-        }
-
-        .stat-title {
-            font-size: 0.9rem;
-            color: #6c757d;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2e59d9;
-        }
-
-        .progress {
-            height: 6px;
-            border-radius: 3px;
-            background-color: #eaecf4;
-        }
-
-        .progress-bar {
-            background-color: #1cc88a;
-            border-radius: 3px;
-        }
-
-        .activity-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        .card-header {
-            background: none;
-            border-bottom: 1px solid #eaecf4;
-            padding: 1rem 1.5rem;
-        }
-
-        .nav-tabs {
-            border: none;
-        }
-
-        .nav-tabs .nav-link {
-            border: none;
-            color: #6c757d;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
-            margin-right: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .nav-tabs .nav-link:hover {
-            background: #f8f9fc;
-        }
-
-        .nav-tabs .nav-link.active {
-            background: #4e73df;
-            color: white;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        .table {
-            margin-bottom: 0;
-        }
-
-        .table th {
-            border-top: none;
-            font-weight: 600;
-            color: #6c757d;
-        }
-
-        .badge {
-            padding: 0.5em 0.75em;
-            border-radius: 6px;
-        }
-
-        .notice-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .notice-item {
-            background: #f8f9fc;
-            border-radius: 10px;
-            padding: 1rem;
-            transition: transform 0.3s ease;
-        }
-
-        .notice-item:hover {
-            transform: translateX(5px);
-        }
-
-        .notice-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .notice-title {
-            margin: 0;
-            color: #2e59d9;
-        }
-
-        .notice-content {
-            margin: 0;
-            color: #6c757d;
-        }
-
-        .alert {
-            border: none;
-            border-radius: 10px;
-            padding: 1rem 1.5rem;
-        }
-
-        .alert i {
-            font-size: 1.25rem;
-        }
-    </style>
-}
-
 @section Scripts {
     <script>
-        function updateDateTime() {
-            const now = new Date();
-            const timeOptions = { 
-                hour: 'numeric', 
-                minute: '2-digit',
-                hour12: true 
-            };
-            const dateOptions = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
-            
-            document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
-            document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
-        }
-
-        // Update time immediately and then every second
-        updateDateTime();
-        setInterval(updateDateTime, 1000);
-
-        // Add hover effect to table rows
-        document.querySelectorAll('.table tbody tr').forEach(row => {
-            row.addEventListener('mouseenter', () => {
-                row.style.transform = 'translateX(5px)';
-                row.style.transition = 'transform 0.3s ease';
-            });
-            row.addEventListener('mouseleave', () => {
-                row.style.transform = 'translateX(0)';
-            });
-        });
+        // Optionally, add modal logic for profile if you want a modal instead of a link
     </script>
 } 

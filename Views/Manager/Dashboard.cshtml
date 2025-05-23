@@ -4,17 +4,36 @@
 }
 
 <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800">Manager Dashboard</h1>
-
-    <!-- Summary Cards Row -->
     <div class="row">
-        <!-- Total Students Card -->
+        <div class="col-12">
+            <h1 class="h3 mb-4 text-gray-800">Manager Dashboard</h1>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Rooms</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalRooms</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-door-open fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Total Students</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalStudents</div>
                         </div>
@@ -26,43 +45,6 @@
             </div>
         </div>
 
-        <!-- Available Rooms Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Available Rooms</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.AvailableRooms</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-door-open fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pending Payments Card -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Pending Payments</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingPayments.ToString("C")</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Active Notices Card -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
                 <div class="card-body">
@@ -79,98 +61,108 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Quick Actions Row -->
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
-                </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <a asp-controller="Room" asp-action="Create" class="btn btn-primary btn-block">
-                                <i class="fas fa-plus"></i> Add New Room
-                            </a>
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Pending Payments</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.PendingPayments.ToString("C")</div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <a asp-controller="Notice" asp-action="Create" class="btn btn-success btn-block">
-                                <i class="fas fa-bullhorn"></i> Post Notice
-                            </a>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <a asp-controller="MealManagement" asp-action="Index" class="btn btn-info btn-block">
-                                <i class="fas fa-utensils"></i> Manage Meals
-                            </a>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <a asp-controller="Payment" asp-action="Index" class="btn btn-warning btn-block">
-                                <i class="fas fa-money-bill"></i> View Payments
-                            </a>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Notices</h6>
-                </div>
-                <div class="card-body">
-                    @if (Model.RecentNotices.Any())
-                    {
-                        <div class="list-group">
-                            @foreach (var notice in Model.RecentNotices)
-                            {
-                                <a href="#" class="list-group-item list-group-item-action">
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h6 class="mb-1">@notice.Title</h6>
-                                        <small>@notice.CreatedAt.ToString("MMM dd, yyyy")</small>
-                                    </div>
-                                    <p class="mb-1">@notice.Content</p>
-                                </a>
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <p class="text-muted">No recent notices</p>
-                    }
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Recent Activities Row -->
+    <!-- Content Row -->
     <div class="row">
-        <div class="col-12">
+        <!-- Recent Rooms -->
+        <div class="col-lg-6 mb-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Activities</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Rooms</h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="activitiesTable" width="100%" cellspacing="0">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Date</th>
-                                    <th>Activity</th>
-                                    <th>User</th>
-                                    <th>Details</th>
+                                    <th>Room Number</th>
+                                    <th>Type</th>
+                                    <th>Capacity</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var activity in Model.RecentActivities)
+                                @foreach (var room in Model.Rooms)
                                 {
                                     <tr>
-                                        <td>@activity.Timestamp.ToString("MMM dd, yyyy HH:mm")</td>
-                                        <td>@activity.ActivityType</td>
-                                        <td>@activity.UserName</td>
-                                        <td>@activity.Details</td>
+                                        <td>@room.RoomNumber</td>
+                                        <td>@room.Type</td>
+                                        <td>@room.Capacity</td>
+                                        <td>
+                                            @if (room.CurrentOccupancy == room.Capacity)
+                                            {
+                                                <span class="badge bg-danger">Full</span>
+                                            }
+                                            else if (room.CurrentOccupancy > 0)
+                                            {
+                                                <span class="badge bg-warning text-dark">Partially Occupied</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">Available</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Students -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Students</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Student ID</th>
+                                    <th>Room</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var student in Model.Students)
+                                {
+                                    <tr>
+                                        <td>@student.Name</td>
+                                        <td>@student.StudentId</td>
+                                        <td>@(student.Room?.RoomNumber ?? "Not Assigned")</td>
+                                        <td>
+                                            @if (student.IsActive)
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Inactive</span>
+                                            }
+                                        </td>
                                     </tr>
                                 }
                             </tbody>

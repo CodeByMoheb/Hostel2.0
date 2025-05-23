@@ -2,6 +2,15 @@
     ViewData["Title"] = "Welcome to Hostel Management System";
 }
 
+@if (User.Identity.IsAuthenticated && User.IsInRole("Student") && (ViewBag.IsStudentWithoutHostel ?? false))
+{
+    <div class="text-center mb-4">
+        <a href="@Url.Action("Join", "Hostel")" class="btn btn-primary btn-lg">
+            Join a Hostel with Code
+        </a>
+    </div>
+}
+
 <div class="container-fluid p-0">
     <!-- Hero Section -->
     <div class="hero-section text-center py-5 mb-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 60vh; display: flex; align-items: center; justify-content: center;">

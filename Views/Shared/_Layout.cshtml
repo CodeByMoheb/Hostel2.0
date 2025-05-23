@@ -23,63 +23,29 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.IsInRole("HostelManager"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="ManagerDashboard">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Room" asp-action="Index">Rooms</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Student" asp-action="Index">Students</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Notice" asp-action="Index">Notices</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Payment" asp-action="Index">Payments</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Maintenance" asp-action="Index">Maintenance</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Document" asp-action="Index">Documents</a>
-                            </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="mealDropdown" role="button" data-bs-toggle="dropdown">
-                                    Meal Management
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="hostelDropdown" role="button" data-bs-toggle="dropdown">
+                                    Hostel Management
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Meal" asp-action="Index">Meals</a></li>
-                                    <li><a class="dropdown-item" asp-controller="MealPlan" asp-action="Index">Meal Plans</a></li>
-                                    <li><a class="dropdown-item" asp-controller="StudentMeal" asp-action="Index">Student Meals</a></li>
-                                    <li><a class="dropdown-item" asp-controller="MealPayment" asp-action="Index">Meal Payments</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Room" asp-action="Index">Rooms</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Student" asp-action="Index">Students</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Notice" asp-action="Index">Notices</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Maintenance" asp-action="Index">Maintenance</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Payment" asp-action="Index">Payments</a></li>
                                 </ul>
                             </li>
                         }
                         else if (User.IsInRole("Student"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="StudentDashboard">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="User" asp-action="Profile">My Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Notice" asp-action="Index">Notices</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Payment" asp-action="Index">Payments</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="MaintenanceRequest" asp-action="Index">Maintenance</a>
-                            </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="mealDropdown" role="button" data-bs-toggle="dropdown">
-                                    Meal Management
+                                <a class="nav-link dropdown-toggle text-dark" href="#" id="studentDropdown" role="button" data-bs-toggle="dropdown">
+                                    Student Services
                                 </a>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" asp-controller="Meal" asp-action="Index">My Meals</a></li>
-                                    <li><a class="dropdown-item" asp-controller="MealPayment" asp-action="Index">Meal Payments</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Maintenance" asp-action="Index">Maintenance</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Payment" asp-action="Index">Payments</a></li>
+                                    <li><a class="dropdown-item" asp-controller="Document" asp-action="Index">Documents</a></li>
                                 </ul>
                             </li>
                         }

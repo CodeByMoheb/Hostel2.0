@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
-using Hostel2._0.Models.MealManagement;
 using Hostel2._0.Models.Enums;
 
 namespace Hostel2._0.Models
@@ -12,7 +11,6 @@ namespace Hostel2._0.Models
         {
             Payments = new List<Payment>();
             MaintenanceRequests = new List<MaintenanceRequest>();
-            StudentMeals = new List<StudentMeal>();
             Documents = new List<Document>();
         }
 
@@ -82,7 +80,6 @@ namespace Hostel2._0.Models
         
         public ICollection<Payment> Payments { get; set; }
         public ICollection<MaintenanceRequest> MaintenanceRequests { get; set; }
-        public ICollection<StudentMeal> StudentMeals { get; set; }
-        public ICollection<Document> Documents { get; set; } = new List<Document>();
+        public ICollection<Document> Documents { get; set; }
     }
 } 

@@ -58,5 +58,7 @@ namespace Hostel2._0.Models
 
         [StringLength(450)]
         public string? UpdatedBy { get; set; }
+
+        public DateTime? ExpiryDate { get; set; }
     }
 } 
