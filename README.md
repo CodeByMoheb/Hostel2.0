@@ -4,28 +4,23 @@ A comprehensive hostel management system built with ASP.NET Core MVC, designed t
 
 ## Features
 
-### User Management
 - Multi-role system (Admin, Hostel Manager, Student)
 - Secure authentication and authorization
 - Profile management
-
-### Hostel Management
 - Room allocation and management
 - Student registration and management
 - Notice board system
-- Subscription management
+- Maintenance request and tracking
+- Payment management (multiple methods, receipts, history)
+- Modern, responsive UI/UX
 
-### Meal Management
-- Meal plan creation and management
-- Daily meal tracking
-- Meal payment processing
-- Meal reports and analytics
+## Screenshots
 
-### Payment Management
-- Multiple payment methods support
-- Payment tracking and history
-- Automated billing
-- Payment reports
+Below are some screenshots showcasing the modern UI and features of Hostel2.0:
+
+| Dashboard | Student Profile | Maintenance Request | Payment | Manager Dashboard |
+|-----------|----------------|--------------------|---------|-------------------|
+| ![Dashboard](screenshort/Screenshot%202025-05-24%20043104.png) | ![Profile](screenshort/Screenshot%202025-05-24%20043031.png) | ![Maintenance](screenshort/Screenshot%202025-05-24%20043019.png) | ![Payment](screenshort/Screenshot%202025-05-24%20042947.png) | ![Manager](screenshort/Screenshot%202025-05-24%20042924.png) |
 
 ## Technology Stack
 
